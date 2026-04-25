@@ -15,14 +15,14 @@ export function Shell({
   ambient?: "strong" | "soft" | "none";
 }) {
   return (
-    <div className="relative isolate flex h-full min-h-screen w-full flex-col overflow-hidden bg-white text-[#22184A]">
+    <div className="relative isolate flex h-full min-h-screen w-full flex-col overflow-hidden bg-white text-brand-ink">
       <Ambient intensity={ambient} />
 
       <header className="relative z-30 flex items-center justify-between px-10 py-6">
         <button
           onClick={onHome}
           aria-label="BRIX — Inicio"
-          className="group inline-flex items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[#3F369F] focus-visible:ring-offset-4"
+          className="group inline-flex items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-4"
         >
           {mark ? (
             <div className="h-8 w-8 transition-transform duration-300 group-hover:scale-105">

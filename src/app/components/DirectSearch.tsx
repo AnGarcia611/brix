@@ -44,13 +44,13 @@ export function DirectSearch({
           placeholder="Buscar en NSR-10"
           aria-label="Buscar en NSR-10"
           style={{ fontSize: "1.625rem", fontWeight: 400, letterSpacing: "-0.01em" }}
-          className="w-full border-0 border-b border-[#22184A]/15 bg-transparent pb-5 text-[#22184A] outline-none transition-colors placeholder:text-[#22184A]/30 focus:border-[#3F369F]"
+          className="w-full border-0 border-b border-brand-ink/15 bg-transparent pb-5 text-brand-ink outline-none transition-colors placeholder:text-brand-ink/30 focus:border-brand-accent"
         />
         <motion.div
           className="absolute bottom-0 left-0 h-[2px]"
           style={{
             background:
-              "linear-gradient(90deg, #3F369F 0%, #8B3DFF 60%, #14CEDB 100%)",
+              "linear-gradient(90deg, var(--color-brand-accent) 0%, var(--color-brand-violet) 60%, var(--color-brand-cyan) 100%)",
           }}
           initial={{ width: 0 }}
           animate={{ width: query ? "100%" : 0 }}
@@ -74,9 +74,9 @@ export function DirectSearch({
                 <li key={r}>
                   <button
                     onClick={() => setQuery(r)}
-                    className="group w-full rounded-lg py-3 text-left text-[17px] text-[#22184A]/75 outline-none transition-colors hover:text-[#22184A] focus-visible:text-[#22184A]"
+                    className="group w-full rounded-lg py-3 text-left text-[17px] text-brand-ink/75 outline-none transition-colors hover:text-brand-ink focus-visible:text-brand-ink"
                   >
-                    <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-[#22184A]/20">
+                      <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-brand-ink/20">
                       {r}
                     </span>
                   </button>
@@ -93,10 +93,10 @@ export function DirectSearch({
                       onClick={() => setQuery(s.q)}
                       className="flex w-full items-baseline justify-between rounded-lg py-3 text-left outline-none"
                     >
-                      <span className="text-[17px] text-[#22184A]/75 transition-colors hover:text-[#22184A]">
+                      <span className="text-[17px] text-brand-ink/75 transition-colors hover:text-brand-ink">
                         {s.q}
                       </span>
-                      <span className="ml-4 text-sm tracking-wider text-[#22184A]/35">
+                      <span className="ml-4 text-sm tracking-wider text-brand-ink/35">
                         {s.ref}
                       </span>
                     </button>
@@ -117,7 +117,7 @@ export function DirectSearch({
             <SectionLabel>
               {filtered.length} {filtered.length === 1 ? "resultado" : "resultados"}
             </SectionLabel>
-            <ul className="mt-4 divide-y divide-[#22184A]/8">
+            <ul className="mt-4 divide-y divide-brand-ink/8">
               {(filtered.length ? filtered : SMART).map((s, i) => (
                 <motion.li
                   key={s.q}
@@ -129,10 +129,10 @@ export function DirectSearch({
                     onClick={onResult}
                     className="group flex w-full items-baseline justify-between py-4 text-left outline-none"
                   >
-                    <span className="text-[17px] text-[#22184A] transition-colors group-hover:text-[#3F369F]">
+                    <span className="text-[17px] text-brand-ink transition-colors group-hover:text-brand-accent">
                       {s.q}
                     </span>
-                    <span className="ml-4 text-sm tracking-wider text-[#22184A]/40 transition-colors group-hover:text-[#3F369F]">
+                    <span className="ml-4 text-sm tracking-wider text-brand-ink/40 transition-colors group-hover:text-brand-accent">
                       {s.ref}
                     </span>
                   </button>
@@ -148,7 +148,7 @@ export function DirectSearch({
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="text-[11px] tracking-[0.14em] text-[#22184A]/40 uppercase">
+    <div className="text-[11px] tracking-[0.14em] text-brand-ink/40 uppercase">
       {children}
     </div>
   );

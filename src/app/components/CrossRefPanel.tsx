@@ -84,7 +84,7 @@ export function CrossRefStack({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-40 bg-[#22184A]/30 backdrop-blur-[2px]"
+            className="fixed inset-0 z-40 bg-brand-ink/30 backdrop-blur-[2px]"
           />
           <div className="pointer-events-none fixed inset-y-0 right-0 z-50 flex">
             {stack.map((code, idx) => {
@@ -108,7 +108,7 @@ export function CrossRefStack({
                     marginRight: isTop ? 0 : -480,
                     zIndex: 50 + idx,
                   }}
-                  className="pointer-events-auto relative h-full overflow-hidden border-l border-[#22184A]/10 bg-white shadow-[0_-20px_60px_-10px_rgba(34,24,74,0.25)]"
+                  className="pointer-events-auto relative h-full overflow-hidden border-l border-brand-ink/10 bg-white shadow-[0_-20px_60px_-10px_rgba(34,24,74,0.25)]"
                 >
                   <PanelContent
                     level={level}
@@ -165,7 +165,7 @@ function PanelContent({
               NIVEL {level}
             </span>
             {readonly && (
-              <span className="inline-flex items-center gap-1 rounded-md bg-[#22184A]/8 px-2 py-0.5 text-xs text-[#22184A]/70">
+              <span className="inline-flex items-center gap-1 rounded-md bg-brand-ink/8 px-2 py-0.5 text-xs text-brand-ink/70">
                 <Lock className="h-3 w-3" /> Solo lectura
               </span>
             )}
@@ -174,7 +174,7 @@ function PanelContent({
             {level > 1 && (
               <button
                 onClick={onBack}
-                className="flex h-8 w-8 items-center justify-center rounded-md text-[#22184A]/60 hover:bg-[#22184A]/5 hover:text-[#22184A]"
+                className="flex h-8 w-8 items-center justify-center rounded-md text-brand-ink/60 hover:bg-brand-ink/5 hover:text-brand-ink"
                 aria-label="Volver un nivel"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -182,7 +182,7 @@ function PanelContent({
             )}
             <button
               onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-md text-[#22184A]/60 hover:bg-[#22184A]/5 hover:text-[#22184A]"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-brand-ink/60 hover:bg-brand-ink/5 hover:text-brand-ink"
               aria-label="Cerrar"
             >
               <X className="h-4 w-4" />
@@ -191,12 +191,12 @@ function PanelContent({
         </div>
 
         {/* Breadcrumb */}
-        <div className="mt-3 flex items-center gap-1 overflow-x-auto text-xs text-[#22184A]/55">
+        <div className="mt-3 flex items-center gap-1 overflow-x-auto text-xs text-brand-ink/55">
           <span>Resultado normativo</span>
           {stack.map((c, i) => (
             <span key={c + i} className="flex items-center gap-1">
               <ChevronRight className="h-3 w-3" />
-              <span className={i === stack.length - 1 ? "text-[#22184A]" : ""}>
+              <span className={i === stack.length - 1 ? "text-brand-ink" : ""}>
                 {c}
               </span>
             </span>
@@ -208,17 +208,17 @@ function PanelContent({
         </div>
         <h2
           style={{ fontSize: "1.375rem", fontWeight: 500, lineHeight: 1.25 }}
-          className="mt-2 text-[#22184A]"
+          className="mt-2 text-brand-ink"
         >
           {ref_.title}
         </h2>
-        <p className="mt-1 text-sm text-[#22184A]/60">{ref_.summary}</p>
+          <p className="mt-1 text-sm text-brand-ink/60">{ref_.summary}</p>
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-5">
         <div className="space-y-4">
           {ref_.body.map((p, i) => (
-            <p key={i} className="text-[15px] leading-relaxed text-[#22184A]/80">
+            <p key={i} className="text-[15px] leading-relaxed text-brand-ink/80">
               {p}
             </p>
           ))}
@@ -226,7 +226,7 @@ function PanelContent({
 
         {ref_.related.length > 0 && !readonly && (
           <div className="mt-8">
-            <div className="mb-3 text-xs tracking-wider text-[#22184A]/50">
+            <div className="mb-3 text-xs tracking-wider text-brand-ink/50">
               REFERENCIAS CRUZADAS
             </div>
             <div className="space-y-2">
@@ -234,13 +234,13 @@ function PanelContent({
                 <button
                   key={r.code}
                   onClick={() => onOpen(r.code)}
-                  className="group flex w-full items-center justify-between rounded-xl border border-[#22184A]/10 bg-white px-4 py-3 text-left transition-all hover:-translate-y-0.5 hover:border-[#3F369F]/40 hover:shadow-md"
+                  className="group flex w-full items-center justify-between rounded-xl border border-brand-ink/10 bg-white px-4 py-3 text-left transition-all hover:-translate-y-0.5 hover:border-brand-accent/40 hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
-                    <Tag color="#8B3DFF">{r.code}</Tag>
-                    <span className="text-sm text-[#22184A]">{r.title}</span>
+                    <Tag color="var(--color-brand-violet)">{r.code}</Tag>
+                    <span className="text-sm text-brand-ink">{r.title}</span>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-[#22184A]/30 transition-transform group-hover:translate-x-1 group-hover:text-[#3F369F]" />
+                  <ChevronRight className="h-4 w-4 text-brand-ink/30 transition-transform group-hover:translate-x-1 group-hover:text-brand-accent" />
                 </button>
               ))}
             </div>
@@ -250,7 +250,7 @@ function PanelContent({
 
       {!readonly && (
         <div className="flex items-center justify-between gap-3 border-t border-[#22184A]/8 bg-white px-6 py-4">
-          <span className="text-xs text-[#22184A]/50">
+          <span className="text-xs text-brand-ink/50">
             Contexto original visible detrás
           </span>
           <Button variant="soft" onClick={() => onPromote(ref_.code)}>

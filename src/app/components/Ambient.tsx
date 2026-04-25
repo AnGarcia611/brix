@@ -15,7 +15,7 @@ export function Ambient({
       aria-hidden
       className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-[#F6F4FB] to-white" />
+      <div className="absolute inset-0 bg-gradient-to-b from-white via-brand-wash to-white" />
 
       <motion.div
         className="absolute -top-[20%] left-[8%] h-[70vw] w-[70vw] max-h-[820px] max-w-[820px] rounded-full"

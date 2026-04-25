@@ -86,22 +86,22 @@ export function Guided({
       <div className="flex items-center justify-between">
         <button
           onClick={back}
-          className="text-[15px] text-[#22184A]/55 outline-none transition-colors hover:text-[#22184A] focus-visible:text-[#22184A]"
+          className="text-[15px] text-brand-ink/55 outline-none transition-colors hover:text-brand-ink focus-visible:text-brand-ink"
         >
           ← Atrás
         </button>
-        <span className="text-[13px] tracking-wider text-[#22184A]/45">
+          <span className="text-[13px] tracking-wider text-brand-ink/45">
           {step + 1} / {STEPS.length}
         </span>
       </div>
 
       <div className="mt-6">
-        <div className="relative h-px w-full overflow-hidden bg-[#22184A]/8">
+        <div className="relative h-px w-full overflow-hidden bg-brand-ink/8">
           <motion.div
             className="h-px"
             style={{
               background:
-                "linear-gradient(90deg, #3F369F 0%, #8B3DFF 55%, #14CEDB 100%)",
+                "linear-gradient(90deg, var(--color-brand-accent) 0%, var(--color-brand-violet) 55%, var(--color-brand-cyan) 100%)",
             }}
             initial={false}
             animate={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
@@ -121,7 +121,7 @@ export function Guided({
         >
           <h1
             style={{ fontSize: "clamp(1.75rem, 3vw, 2.25rem)", fontWeight: 500, letterSpacing: "-0.015em", lineHeight: 1.15 }}
-            className="text-[#22184A]"
+            className="text-brand-ink"
           >
             {q.title}
           </h1>
@@ -136,21 +136,21 @@ export function Guided({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.06 + i * 0.04 }}
                   onClick={() => select(opt.value)}
-                  className={`group relative flex items-center justify-between rounded-[16px] border bg-white px-6 py-5 text-left outline-none transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 focus-visible:ring-4 focus-visible:ring-[#3F369F]/20 ${
+                  className={`group relative flex items-center justify-between rounded-[16px] border bg-white px-6 py-5 text-left outline-none transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 focus-visible:ring-4 focus-visible:ring-brand-accent/20 ${
                     selected
-                      ? "border-[#0DE77A] bg-[#0DE77A]/4 shadow-[0_8px_24px_-12px_rgba(13,231,122,0.35)]"
-                      : "border-[#22184A]/10 hover:border-[#22184A]/25 hover:shadow-[0_2px_4px_rgba(34,24,74,0.04),0_16px_36px_-20px_rgba(34,24,74,0.15)]"
+                      ? "border-brand-green bg-brand-green/4 shadow-[0_8px_24px_-12px_rgba(13,231,122,0.35)]"
+                      : "border-brand-ink/10 hover:border-brand-ink/25 hover:shadow-[0_2px_4px_rgba(34,24,74,0.04),0_16px_36px_-20px_rgba(34,24,74,0.15)]"
                   }`}
                 >
                   <div>
-                    <div className="text-[17px] text-[#22184A]" style={{ fontWeight: 500 }}>
+                    <div className="text-[17px] text-brand-ink" style={{ fontWeight: 500 }}>
                       {opt.label}
                     </div>
-                    <div className="mt-1 text-sm text-[#22184A]/50">{opt.description}</div>
+                    <div className="mt-1 text-sm text-brand-ink/50">{opt.description}</div>
                   </div>
                   <div
                     className={`flex h-5 w-5 items-center justify-center rounded-full border transition-all duration-200 ${
-                      selected ? "border-[#0DE77A] bg-[#0DE77A]" : "border-[#22184A]/20 group-hover:border-[#3F369F]/40"
+                      selected ? "border-brand-green bg-brand-green" : "border-brand-ink/20 group-hover:border-brand-accent/40"
                     }`}
                     aria-hidden
                   >

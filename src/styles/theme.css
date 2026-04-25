@@ -1,3 +1,17 @@
+@theme {
+  --color-brand-ink: #22184A;
+  --color-brand-accent: #3F369F;
+  --color-brand-violet: #8B3DFF;
+  --color-brand-violet-soft: #8C69F9;
+  --color-brand-cyan: #14CEDB;
+  --color-brand-green: #0DE77A;
+  --color-brand-blue: #597CFF;
+  --color-brand-purple: #A548FF;
+  --color-brand-pink: #D269E6;
+  --color-brand-red: #FE4F54;
+  --color-brand-wash: #F6F4FB;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

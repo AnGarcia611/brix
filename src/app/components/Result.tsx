@@ -62,7 +62,7 @@ export function Result({ onHome }: { onHome: () => void; onRestart: () => void }
 
   return (
     <div
-      className="relative grid h-[calc(100vh-88px)] overflow-hidden border-t border-[#22184A]/8"
+      className="relative grid h-[calc(100vh-88px)] overflow-hidden border-t border-brand-ink/8"
       style={{
         gridTemplateColumns: gridCols,
         transition: "grid-template-columns 200ms cubic-bezier(0.22, 1, 0.36, 1)",
@@ -99,13 +99,13 @@ function LeftNav({ open, onToggle }: { open: boolean; onToggle: () => void }) {
     );
   }
   return (
-    <aside className="flex flex-col overflow-hidden border-r border-[#22184A]/8 bg-white">
+    <aside className="flex flex-col overflow-hidden border-r border-brand-ink/8 bg-white">
       <div className="flex items-start justify-between px-6 pt-8 pb-4">
         <div>
-          <div className="text-[11px] tracking-[0.14em] text-[#22184A]/40 uppercase">
+          <div className="text-[11px] tracking-[0.14em] text-brand-ink/40 uppercase">
             NSR-10
           </div>
-          <div className="mt-1 text-[15px] text-[#22184A]" style={{ fontWeight: 500 }}>
+          <div className="mt-1 text-[15px] text-brand-ink" style={{ fontWeight: 500 }}>
             Estructura
           </div>
         </div>
@@ -131,7 +131,7 @@ function CollapseBtn({
     <button
       onClick={onClick}
       aria-label={side === "left" ? "Ocultar estructura" : "Ocultar índice"}
-      className="flex h-7 w-7 items-center justify-center rounded-md text-[#22184A]/45 outline-none transition-colors duration-150 hover:bg-[#22184A]/5 hover:text-[#22184A] focus-visible:ring-2 focus-visible:ring-[#3F369F]/30"
+      className="flex h-7 w-7 items-center justify-center rounded-md text-brand-ink/45 outline-none transition-colors duration-150 hover:bg-brand-ink/5 hover:text-brand-ink focus-visible:ring-2 focus-visible:ring-brand-accent/30"
     >
       <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         {side === "left" ? (
@@ -157,12 +157,12 @@ function CollapsedRail({
     <aside
       className={`flex flex-col items-center bg-white ${
         side === "left" ? "border-r" : "border-l"
-      } border-[#22184A]/8`}
+      } border-brand-ink/8`}
     >
       <button
         onClick={onExpand}
         aria-label={`Mostrar ${label}`}
-        className="flex h-11 w-full items-center justify-center text-[#22184A]/50 outline-none transition-colors duration-150 hover:bg-[#22184A]/4 hover:text-[#22184A] focus-visible:bg-[#22184A]/4"
+        className="flex h-11 w-full items-center justify-center text-brand-ink/50 outline-none transition-colors duration-150 hover:bg-brand-ink/4 hover:text-brand-ink focus-visible:bg-brand-ink/4"
       >
         <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           {side === "left" ? <path d="M6 3l5 5-5 5" /> : <path d="M10 3 5 8l5 5" />}
@@ -175,7 +175,7 @@ function CollapsedRail({
         tabIndex={-1}
       >
         <span
-          className="select-none text-[11px] tracking-[0.22em] text-[#22184A]/40 uppercase"
+          className="select-none text-[11px] tracking-[0.22em] text-brand-ink/40 uppercase"
           style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
         >
           {label}
@@ -199,30 +199,30 @@ function TreeSection({
     <div className="mb-1">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm text-[#22184A]/75 outline-none transition-colors hover:bg-[#22184A]/4 focus-visible:bg-[#22184A]/4"
+        className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm text-brand-ink/75 outline-none transition-colors hover:bg-brand-ink/4 focus-visible:bg-brand-ink/4"
       >
         <span>{title}</span>
-        <span className={`text-[#22184A]/30 transition-transform ${expanded ? "rotate-90" : ""}`}>›</span>
+        <span className={`text-brand-ink/30 transition-transform ${expanded ? "rotate-90" : ""}`}>›</span>
       </button>
       {expanded && items.length > 0 && (
-        <div className="mt-1 ml-3 border-l border-[#22184A]/8 pl-2">
+          <div className="mt-1 ml-3 border-l border-brand-ink/8 pl-2">
           {items.map((c) => (
             <button
               key={c.code}
               className={`relative flex w-full items-baseline gap-3 rounded-md px-3 py-2 text-left text-sm outline-none transition-colors duration-150 ${
                 c.active
-                  ? "bg-[#3F369F]/10 text-[#3F369F]"
-                  : "text-[#22184A]/65 hover:bg-[#22184A]/4 hover:text-[#22184A]"
+                  ? "bg-brand-accent/10 text-brand-accent"
+                  : "text-brand-ink/65 hover:bg-brand-ink/4 hover:text-brand-ink"
               }`}
               style={{ fontWeight: c.active ? 500 : 400 }}
             >
               {c.active && (
                 <span
                   aria-hidden
-                  className="absolute -left-[9px] top-1.5 bottom-1.5 w-[2px] rounded-full bg-[#3F369F]"
+                  className="absolute -left-[9px] top-1.5 bottom-1.5 w-[2px] rounded-full bg-brand-accent"
                 />
               )}
-              <span className="w-8 text-xs tracking-wider text-[#22184A]/40">{c.code}</span>
+              <span className="w-8 text-xs tracking-wider text-brand-ink/40">{c.code}</span>
               <span>{c.title}</span>
             </button>
           ))}
@@ -246,12 +246,12 @@ function CenterContent({
   return (
     <section className="flex flex-col overflow-hidden bg-white">
       <div className="flex items-center justify-between gap-6 px-12 pt-10">
-        <div className="flex items-center gap-1.5 text-[12px] text-[#22184A]/35">
+        <div className="flex items-center gap-1.5 text-[12px] text-brand-ink/35">
           <span>Título A</span>
-          <span className="text-[#22184A]/20">/</span>
+          <span className="text-brand-ink/20">/</span>
           <span>Capítulo A.2</span>
-          <span className="text-[#22184A]/20">/</span>
-          <span className="text-[#22184A]/60">A.2.5</span>
+          <span className="text-brand-ink/20">/</span>
+          <span className="text-brand-ink/60">A.2.5</span>
         </div>
         <ModeSegment mode={mode} setMode={setMode} />
       </div>
@@ -322,7 +322,7 @@ function ModeSegment({
     <div
       role="tablist"
       aria-label="Modo de consulta"
-      className="relative inline-flex items-center rounded-full bg-[#22184A]/5 p-1"
+      className="relative inline-flex items-center rounded-full bg-brand-ink/5 p-1"
     >
       {items.map((it) => {
         const active = mode === it.id;
@@ -332,8 +332,8 @@ function ModeSegment({
             role="tab"
             aria-selected={active}
             onClick={() => setMode(it.id)}
-            className={`relative rounded-full px-4 py-1.5 text-[13px] outline-none transition-colors duration-150 ease-out focus-visible:ring-2 focus-visible:ring-[#3F369F]/25 ${
-              active ? "text-[#3F369F]" : "text-[#22184A]/45 hover:text-[#22184A]/75"
+            className={`relative rounded-full px-4 py-1.5 text-[13px] outline-none transition-colors duration-150 ease-out focus-visible:ring-2 focus-visible:ring-brand-accent/25 ${
+              active ? "text-brand-accent" : "text-brand-ink/45 hover:text-brand-ink/75"
             }`}
             style={{ fontWeight: active ? 500 : 400, letterSpacing: "-0.005em" }}
           >
@@ -368,10 +368,10 @@ function RefLink({
   return (
     <button
       onClick={() => onOpen(code)}
-      className={`rounded-sm outline-none transition-[color,background-color,text-decoration-color] duration-150 ease-out focus-visible:ring-2 focus-visible:ring-[#3F369F]/30 ${
+      className={`rounded-sm outline-none transition-[color,background-color,text-decoration-color] duration-150 ease-out focus-visible:ring-2 focus-visible:ring-brand-accent/30 ${
         strong
-          ? "bg-[#3F369F]/8 px-1.5 py-px text-[#3F369F] hover:bg-[#3F369F]/14"
-          : "text-[#597CFF] no-underline decoration-[#597CFF]/0 underline-offset-4 hover:underline hover:decoration-[#597CFF]/60"
+          ? "bg-brand-accent/8 px-1.5 py-px text-brand-accent hover:bg-brand-accent/14"
+          : "text-brand-blue no-underline decoration-brand-blue/0 underline-offset-4 hover:underline hover:decoration-brand-blue/60"
       }`}
       style={strong ? { fontWeight: 500 } : undefined}
     >
@@ -398,7 +398,7 @@ function KeyValue({
               padding: "0 2px",
               borderRadius: 2,
               fontWeight: 500,
-              color: "#22184A",
+              color: "var(--color-brand-ink)",
             }
           : undefined
       }
@@ -419,7 +419,7 @@ function Article({
   const dataOn = mode === "datos";
   return (
     <article className="space-y-7">
-      <p className="text-[17px] leading-[1.78] text-[#22184A]/80" style={{ letterSpacing: "-0.002em" }}>
+      <p className="text-[17px] leading-[1.78] text-brand-ink/80" style={{ letterSpacing: "-0.002em" }}>
         Las edificaciones se clasifican en{" "}
         <KeyValue on={dataOn}>cuatro grupos de uso</KeyValue> —véase{" "}
         <RefLink code="A.2.5.1" onOpen={onOpen} emphasis={refEmph}>A.2.5.1</RefLink>— y a cada grupo
@@ -427,7 +427,7 @@ function Article({
         fuerzas sísmicas de diseño obtenidas según{" "}
         <RefLink code="A.2.6" onOpen={onOpen} emphasis={refEmph}>A.2.6</RefLink>.
       </p>
-      <p className="text-[17px] leading-[1.78] text-[#22184A]/80" style={{ letterSpacing: "-0.002em" }}>
+      <p className="text-[17px] leading-[1.78] text-brand-ink/80" style={{ letterSpacing: "-0.002em" }}>
         Los valores de <em>I</em> son{" "}
         <KeyValue on={dataOn}>1,50 · 1,25 · 1,10 · 1,00</KeyValue>{" "}
         según el grupo. Este coeficiente se aplica también al cálculo de{" "}
@@ -449,8 +449,8 @@ function DataOverlay() {
   return (
     <div>
       {/* Valor clave — hero grid */}
-      <div className="rounded-[16px] border border-[#22184A]/8 bg-[#FAFAFB] p-8 shadow-[0_1px_2px_rgba(34,24,74,0.03)]">
-        <div className="text-[11px] tracking-[0.16em] text-[#22184A]/40 uppercase">
+      <div className="rounded-[16px] border border-brand-ink/8 bg-[#FAFAFB] p-8 shadow-[0_1px_2px_rgba(34,24,74,0.03)]">
+        <div className="text-[11px] tracking-[0.16em] text-brand-ink/40 uppercase">
           Valor clave
         </div>
         <div className="mt-6 grid grid-cols-4 gap-6">
@@ -463,11 +463,11 @@ function DataOverlay() {
                   letterSpacing: "-0.028em",
                   lineHeight: 1,
                 }}
-                className="text-[#22184A]"
+                className="text-brand-ink"
               >
                 {r.i}
               </div>
-              <div className="mt-2 text-[12px] tracking-[0.02em] text-[#22184A]/50">
+              <div className="mt-2 text-[12px] tracking-[0.02em] text-brand-ink/50">
                 Grupo {r.g}
               </div>
             </div>
@@ -477,11 +477,11 @@ function DataOverlay() {
 
       {/* Detailed breakdown */}
       <div className="mt-8">
-        <div className="text-[11px] tracking-[0.16em] text-[#22184A]/40 uppercase">
+        <div className="text-[11px] tracking-[0.16em] text-brand-ink/40 uppercase">
           Detalle por grupo
         </div>
         <div className="mt-4">
-          <div className="grid grid-cols-[56px_1fr_1.2fr_64px] border-b border-[#22184A]/10 pb-2.5 text-[11px] tracking-[0.14em] text-[#22184A]/40 uppercase">
+          <div className="grid grid-cols-[56px_1fr_1.2fr_64px] border-b border-brand-ink/10 pb-2.5 text-[11px] tracking-[0.14em] text-brand-ink/40 uppercase">
             <div>Grupo</div>
             <div>Clasificación</div>
             <div>Ejemplos</div>
@@ -490,12 +490,12 @@ function DataOverlay() {
           {rows.map((r) => (
             <div
               key={r.g}
-              className="grid grid-cols-[56px_1fr_1.2fr_64px] items-center border-b border-[#22184A]/6 py-3.5 text-[14px] last:border-b-0"
+              className="grid grid-cols-[56px_1fr_1.2fr_64px] items-center border-b border-brand-ink/6 py-3.5 text-[14px] last:border-b-0"
             >
-              <div className="text-[#22184A]" style={{ fontWeight: 500 }}>{r.g}</div>
-              <div className="text-[#22184A]/75">{r.u}</div>
-              <div className="text-[#22184A]/50">{r.ex}</div>
-              <div className="text-right text-[#22184A]" style={{ fontWeight: 500 }}>{r.i}</div>
+              <div className="text-brand-ink" style={{ fontWeight: 500 }}>{r.g}</div>
+              <div className="text-brand-ink/75">{r.u}</div>
+              <div className="text-brand-ink/50">{r.ex}</div>
+              <div className="text-right text-brand-ink" style={{ fontWeight: 500 }}>{r.i}</div>
             </div>
           ))}
         </div>
@@ -511,29 +511,29 @@ function RelationOverlay({ onOpen }: { onOpen: (c: string) => void }) {
     { code: "A.6.4", title: "Derivas máximas", desc: "Aplicación del coeficiente en derivas." },
   ];
   return (
-    <div className="border-t border-[#22184A]/8 pt-8">
-      <div className="text-[11px] tracking-[0.14em] text-[#22184A]/40 uppercase">
+    <div className="border-t border-brand-ink/8 pt-8">
+      <div className="text-[11px] tracking-[0.14em] text-brand-ink/40 uppercase">
         Referencias conectadas
       </div>
-      <div className="mt-3 divide-y divide-[#22184A]/8">
+      <div className="mt-3 divide-y divide-brand-ink/8">
         {items.map((it) => (
           <button
             key={it.code}
             onClick={() => onOpen(it.code)}
             className="group flex w-full items-baseline gap-6 py-4 text-left outline-none"
           >
-            <div className="w-16 text-xs tracking-wider text-[#22184A]/45 transition-colors duration-150 group-hover:text-[#3F369F]">
+            <div className="w-16 text-xs tracking-wider text-brand-ink/45 transition-colors duration-150 group-hover:text-brand-accent">
               {it.code}
             </div>
             <div className="flex-1">
-              <div className="text-[15px] text-[#22184A] transition-colors duration-150 group-hover:text-[#3F369F]" style={{ fontWeight: 500 }}>
+              <div className="text-[15px] text-brand-ink transition-colors duration-150 group-hover:text-brand-accent" style={{ fontWeight: 500 }}>
                 {it.title}
               </div>
-              <div className="mt-0.5 text-[13px] text-[#22184A]/55">{it.desc}</div>
+              <div className="mt-0.5 text-[13px] text-brand-ink/55">{it.desc}</div>
             </div>
             <span
               aria-hidden
-              className="text-[#22184A]/30 transition-all duration-150 group-hover:translate-x-0.5 group-hover:text-[#3F369F]"
+              className="text-brand-ink/30 transition-all duration-150 group-hover:translate-x-0.5 group-hover:text-brand-accent"
             >
               →
             </span>
@@ -570,22 +570,22 @@ function RightPanel({
   }
 
   return (
-    <aside className="flex flex-col overflow-hidden border-l border-[#22184A]/6 bg-[#FBFBFC] text-[#22184A]/75">
+    <aside className="flex flex-col overflow-hidden border-l border-brand-ink/6 bg-[#FBFBFC] text-brand-ink/75">
       {/* Dynamic index — memory of consultation */}
-      <div className="border-b border-[#22184A]/6 px-6 pt-8 pb-6">
+      <div className="border-b border-brand-ink/6 px-6 pt-8 pb-6">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="text-[11px] tracking-[0.16em] text-[#22184A]/35 uppercase">
+            <div className="text-[11px] tracking-[0.16em] text-brand-ink/35 uppercase">
               Índice de la consulta
             </div>
-            <div className="mt-1.5 text-[14px] text-[#22184A]/75" style={{ fontWeight: 500 }}>
+            <div className="mt-1.5 text-[14px] text-brand-ink/75" style={{ fontWeight: 500 }}>
               Tu recorrido
             </div>
           </div>
           <div className="flex items-center gap-1">
             <button
               onClick={onHome}
-              className="rounded-md px-2 py-1 text-[12px] text-[#22184A]/40 outline-none transition-colors duration-150 hover:bg-[#22184A]/4 hover:text-[#22184A]/75"
+              className="rounded-md px-2 py-1 text-[12px] text-brand-ink/40 outline-none transition-colors duration-150 hover:bg-brand-ink/4 hover:text-brand-ink/75"
             >
               Nueva
             </button>
@@ -601,13 +601,13 @@ function RightPanel({
                 onClick={() => onSelect(code)}
                 className={`rounded-md px-1.5 py-0.5 outline-none transition-colors duration-150 ${
                   code === focus
-                    ? "bg-[#3F369F]/90 text-white"
-                    : "text-[#22184A]/55 hover:bg-[#22184A]/5 hover:text-[#22184A]/80"
+                    ? "bg-brand-accent/90 text-white"
+                    : "text-brand-ink/55 hover:bg-brand-ink/5 hover:text-brand-ink/80"
                 }`}
               >
                 {code}
               </button>
-              {i < path.length - 1 && <span className="text-[#22184A]/20">→</span>}
+              {i < path.length - 1 && <span className="text-brand-ink/20">→</span>}
             </span>
           ))}
         </div>
@@ -626,12 +626,12 @@ function RightPanel({
               >
                 <span
                   className={`mt-1.5 h-1.5 w-1.5 rounded-full ${
-                    v.code === focus ? "bg-[#3F369F]" : "bg-[#22184A]/20"
+                    v.code === focus ? "bg-brand-accent" : "bg-brand-ink/20"
                   }`}
                   aria-hidden
                 />
-                <span className="w-14 text-[11px] tracking-wider text-[#22184A]/40">{v.code}</span>
-                <span className="flex-1 text-[12.5px] text-[#22184A]/70">{v.title}</span>
+                <span className="w-14 text-[11px] tracking-wider text-brand-ink/40">{v.code}</span>
+                <span className="flex-1 text-[12.5px] text-brand-ink/70">{v.title}</span>
               </button>
             </li>
           ))}
@@ -641,17 +641,17 @@ function RightPanel({
       {/* PDF viewer */}
       <div className="flex flex-1 flex-col overflow-hidden">
         <div className="flex items-baseline justify-between px-6 pt-6">
-          <div className="text-[11px] tracking-[0.16em] text-[#22184A]/35 uppercase">
+          <div className="text-[11px] tracking-[0.16em] text-brand-ink/35 uppercase">
             Documento original
           </div>
-          <span className="text-[11px] text-[#22184A]/35">p. 47</span>
+          <span className="text-[11px] text-brand-ink/35">p. 47</span>
         </div>
         <div className="flex-1 overflow-y-auto px-6 pt-4 pb-6">
-          <div className="mx-auto aspect-[3/4] w-full overflow-hidden rounded-md border border-[#22184A]/8 bg-white p-5 text-[10px] leading-relaxed text-[#22184A]/65 shadow-[0_1px_2px_rgba(34,24,74,0.04)]">
-            <div className="border-b border-[#22184A]/10 pb-2 text-center text-[9px] tracking-[0.14em] text-[#22184A]/45 uppercase">
+          <div className="mx-auto aspect-[3/4] w-full overflow-hidden rounded-md border border-brand-ink/8 bg-white p-5 text-[10px] leading-relaxed text-brand-ink/65 shadow-[0_1px_2px_rgba(34,24,74,0.04)]">
+            <div className="border-b border-brand-ink/10 pb-2 text-center text-[9px] tracking-[0.14em] text-brand-ink/45 uppercase">
               NSR-10 · Título A
             </div>
-            <div className="mt-3 text-[#3F369F]" style={{ fontWeight: 500 }}>
+            <div className="mt-3 text-brand-accent" style={{ fontWeight: 500 }}>
               A.2.5 Coeficientes de importancia
             </div>
             <p className="mt-2">
@@ -660,7 +660,7 @@ function RightPanel({
             <p className="mt-2">
               A cada grupo se asigna un coeficiente I que modifica el espectro sísmico de diseño.
             </p>
-            <div className="mt-3 rounded bg-[#22184A]/4 p-2">
+            <div className="mt-3 rounded bg-brand-ink/4 p-2">
               <div style={{ fontWeight: 500 }}>Tabla A.2.5-1</div>
               <div className="mt-1.5 grid grid-cols-2 gap-y-0.5 text-[9px]">
                 <div>Grupo IV</div><div className="text-right">I = 1,50</div>
