@@ -1,12 +1,13 @@
 import { TITULO_B_CHAPTERS } from "./titulo-b/_chapters"
 import { B1 } from "./titulo-b/B.1"
+import { B2 } from "./titulo-b/B.2"
 import type { Article } from "./types"
 
 // ─── Árbol de navegación (LeftNav en ArticleView) ───────────────────────────
 export const TREE = [{ title: "Título B — Cargas", chapters: TITULO_B_CHAPTERS }]
 
 // ─── Lookup de artículos por código ─────────────────────────────────────────
-const ALL_ARTICLES: Article[] = [...B1]
+const ALL_ARTICLES: Article[] = [...B1, ...B2]
 
 export const ARTICLES: Record<string, Article> = Object.fromEntries(
   ALL_ARTICLES.map((a) => [a.code, a])
@@ -43,4 +44,10 @@ export const SEARCH_INDEX: { q: string; ref: string }[] = [
   { q: "trayectoria continua solicitaciones diseño", ref: "B.1.4.1" },
   { q: "capacidad resistente cimentación apoyo fuerzas", ref: "B.1.4.2" },
   { q: "diafragma fuerzas horizontales viento sismo empuje", ref: "B.1.4.3" },
+  { q: "definiciones cargas nominales mayoradas esfuerzos trabajo resistencia", ref: "B.2.1" },
+  { q: "nomenclatura símbolos carga muerta viva viento sismo", ref: "B.2.2" },
+  { q: "combinaciones carga esfuerzos de trabajo estado límite servicio", ref: "B.2.3" },
+  { q: "combinaciones básicas esfuerzos trabajo D L W E sismo", ref: "B.2.3" },
+  { q: "combinaciones cargas mayoradas método resistencia factores", ref: "B.2.4" },
+  { q: "factores de carga 1.2D 1.6L 1.0E método resistencia", ref: "B.2.4" },
 ]

@@ -41,4 +41,56 @@ export const TITULO_B_CHAPTERS: TreeChapter[] = [
       },
     ],
   },
+  {
+    title: "Capítulo B.2 — Combinaciones de cargas",
+    items: [
+      {
+        code: "B.2.1",
+        title: "Definiciones y limitaciones",
+        children: [
+          { code: "B.2.1.1", title: "Definiciones" },
+          { code: "B.2.1.2", title: "Limitación" },
+        ],
+      },
+      { code: "B.2.2", title: "Nomenclatura" },
+      {
+        code: "B.2.3",
+        title: "Combinaciones de carga — método de esfuerzos de trabajo",
+        children: [
+          { code: "B.2.3.1", title: "Combinaciones básicas" },
+          {
+            code: "B.2.3.2",
+            title: "Fuerzas sísmicas",
+            children: [
+              { code: "B.2.3.2.1", title: "Verificación de derivas — sismo de diseño" },
+              { code: "B.2.3.2.2", title: "Verificación de derivas — sismo de umbral de daño" },
+            ],
+          },
+        ],
+      },
+      {
+        code: "B.2.4",
+        title: "Combinaciones de cargas mayoradas — método de resistencia",
+        children: [
+          { code: "B.2.4.1", title: "Aplicabilidad" },
+          {
+            code: "B.2.4.2",
+            title: "Combinaciones básicas",
+            children: [
+              { code: "B.2.4.2.1", title: "Fuerzas sísmicas reducidas de diseño" },
+              { code: "B.2.4.2.2", title: "Reducción del factor de carga viva" },
+              { code: "B.2.4.2.3", title: "Factor de viento sin reducción por direccionalidad" },
+              { code: "B.2.4.2.4", title: "Factor de sismo al nivel de servicio" },
+              { code: "B.2.4.2.5", title: "Factor de carga H en combinaciones con viento o sismo" },
+              { code: "B.2.4.2.6", title: "Efectos de impacto" },
+              {
+                code: "B.2.4.2.7",
+                title: "Estimativos de deformaciones diferidas y variaciones de temperatura",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ]
