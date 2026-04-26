@@ -21,9 +21,9 @@ export type Block =
   | { type: "subsection"; code: string; title: string; items: Block[] } // recursivo
 
 export type Article = {
-  code: string        // "B.1.2"
-  title: string       // "Requisitos básicos"
-  summary: string     // 1-2 oraciones — usado en el panel de referencias cruzadas
+  code: string // "B.1.2"
+  title: string // "Requisitos básicos"
+  summary: string // 1-2 oraciones — usado en el panel de referencias cruzadas
   body: Block[]
   related: { code: string; title: string }[]
 }
@@ -35,7 +35,7 @@ export type TreeItem = {
 }
 
 export type TreeChapter = {
-  title: string   // "Capítulo B.1 — Requisitos generales"
+  title: string // "Capítulo B.1 — Requisitos generales"
   items: TreeItem[]
 }
 ```
@@ -93,13 +93,13 @@ Cada sección numerada del texto (B.x, B.x.x, B.x.x.x, B.x.x.x.x) genera su prop
 
 ### Mapeo texto plano → bloque
 
-| Señal en el texto                                            | Tipo de bloque | Notas                                                                                      |
-| ------------------------------------------------------------ | -------------- | ------------------------------------------------------------------------------------------ |
-| Párrafo narrativo continuo                                   | `paragraph`    | Texto literal; cada párrafo separado → bloque separado                                     |
-| Lista con letras (a), b)) o guiones                          | `list`         | Cada ítem → un string en `items[]`                                                         |
-| Tabla con filas y columnas                                   | `table`        | `caption` = título de tabla; valores numéricos sin comillas, textuales con comillas         |
-| "Nota:", "NOTA:", aclaraciones enmarcadas                    | `note`         | El prefijo "Nota:" se omite del campo `text`                                                |
-| Sub-numeral sin entrada propia en `_chapters.ts`             | `subsection`   | Si tiene entrada en `_chapters.ts`, va como `Article` independiente, no como `subsection`  |
+| Señal en el texto                                | Tipo de bloque | Notas                                                                                     |
+| ------------------------------------------------ | -------------- | ----------------------------------------------------------------------------------------- |
+| Párrafo narrativo continuo                       | `paragraph`    | Texto literal; cada párrafo separado → bloque separado                                    |
+| Lista con letras (a), b)) o guiones              | `list`         | Cada ítem → un string en `items[]`                                                        |
+| Tabla con filas y columnas                       | `table`        | `caption` = título de tabla; valores numéricos sin comillas, textuales con comillas       |
+| "Nota:", "NOTA:", aclaraciones enmarcadas        | `note`         | El prefijo "Nota:" se omite del campo `text`                                              |
+| Sub-numeral sin entrada propia en `_chapters.ts` | `subsection`   | Si tiene entrada en `_chapters.ts`, va como `Article` independiente, no como `subsection` |
 
 ### Ejemplo con tablas
 
@@ -190,9 +190,7 @@ export const TITULO_B_CHAPTERS: TreeChapter[] = [
       {
         code: "B.3.5",
         title: "Reducción de cargas vivas",
-        children: [
-          { code: "B.3.5.1", title: "Requisitos" },
-        ],
+        children: [{ code: "B.3.5.1", title: "Requisitos" }],
       },
     ],
   },
@@ -286,7 +284,6 @@ Nota: Esta reducción no aplica a cargas de cubierta ni a cargas superiores a 4.
 - No omitir artículos aunque tengan poco contenido.
 - `related` solo referencia códigos que existan o vayan a existir en el sistema. No inventar códigos.
 - El array exportado se nombra con el prefijo del título en mayúsculas: `B1`, `B2`, `B3`, etc.
-
 
 ### Tipos base
 
