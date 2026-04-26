@@ -398,7 +398,7 @@ function CenterContent({
       <div className="px-12 pt-5">
         <h1
           style={{
-            fontSize: "clamp(2rem, 3.2vw, 2.625rem)",
+            fontSize: "clamp(1.5rem, 2.4vw, 1.875rem)",
             fontWeight: 500,
             letterSpacing: "-0.022em",
             lineHeight: 1.08,
@@ -815,48 +815,50 @@ function RightPanel({
   return (
     <aside className="flex flex-col overflow-hidden border-l border-brand-ink/6 bg-[#FBFBFC] text-brand-ink/75">
       {/* Dynamic index — memory of consultation */}
-      <div className="border-b border-brand-ink/6 px-6 pt-8 pb-6">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <div className="text-[11px] tracking-[0.16em] text-brand-ink/35 uppercase">
-              Índice de la consulta
+      <div className="flex min-h-0 flex-1 flex-col border-b border-brand-ink/6">
+        <div className="shrink-0 px-6 pt-8 pb-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="text-[11px] tracking-[0.16em] text-brand-ink/35 uppercase">
+                Índice de la consulta
+              </div>
+              <div className="mt-1.5 text-[14px] text-brand-ink/75" style={{ fontWeight: 500 }}>
+                Tu recorrido
+              </div>
             </div>
-            <div className="mt-1.5 text-[14px] text-brand-ink/75" style={{ fontWeight: 500 }}>
-              Tu recorrido
-            </div>
-          </div>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={onHome}
-              className="rounded-md px-2 py-1 text-[12px] text-brand-ink/40 outline-none transition-colors duration-150 hover:bg-brand-ink/4 hover:text-brand-ink/75"
-            >
-              Nueva
-            </button>
-            <CollapseBtn side="right" onClick={onToggle} />
-          </div>
-        </div>
-
-        {/* Breadcrumb path */}
-        <div className="mt-5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[12px]">
-          {path.map((code, i) => (
-            <span key={code + i} className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               <button
-                onClick={() => onSelect(code)}
-                className={`rounded-md px-1.5 py-0.5 outline-none transition-colors duration-150 ${
-                  code === focus
-                    ? "bg-brand-accent/90 text-white"
-                    : "text-brand-ink/55 hover:bg-brand-ink/5 hover:text-brand-ink/80"
-                }`}
+                onClick={onHome}
+                className="rounded-md px-2 py-1 text-[12px] text-brand-ink/40 outline-none transition-colors duration-150 hover:bg-brand-ink/4 hover:text-brand-ink/75"
               >
-                {code}
+                Nueva
               </button>
-              {i < path.length - 1 && <span className="text-brand-ink/20">→</span>}
-            </span>
-          ))}
+              <CollapseBtn side="right" onClick={onToggle} />
+            </div>
+          </div>
+
+          {/* Breadcrumb path */}
+          <div className="mt-4 flex flex-wrap items-center gap-x-1 gap-y-1">
+            {path.map((code, i) => (
+              <span key={code + i} className="flex items-center gap-1">
+                <button
+                  onClick={() => onSelect(code)}
+                  className={`rounded px-1 py-0.5 text-[11px] outline-none transition-colors duration-150 ${
+                    code === focus
+                      ? "bg-brand-accent/90 text-white"
+                      : "text-brand-ink/45 hover:bg-brand-ink/5 hover:text-brand-ink/75"
+                  }`}
+                >
+                  {code}
+                </button>
+                {i < path.length - 1 && <span className="text-[11px] text-brand-ink/30">→</span>}
+              </span>
+            ))}
+          </div>
         </div>
 
-        {/* Visited nodes as a memory list */}
-        <ul className="mt-6 space-y-0.5">
+        {/* Visited nodes as a memory list — scrollable */}
+        <ul className="min-h-0 flex-1 overflow-y-scroll px-6 pb-6 space-y-0.5" style={{ scrollbarGutter: 'stable' }}>
           {visits.map((v) => (
             <li key={v.code}>
               <button
@@ -868,12 +870,12 @@ function RightPanel({
                 }`}
               >
                 <span
-                  className={`mt-1.5 h-1.5 w-1.5 rounded-full ${
+                  className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
                     v.code === focus ? "bg-brand-accent" : "bg-brand-ink/20"
                   }`}
                   aria-hidden
                 />
-                <span className="w-14 text-[11px] tracking-wider text-brand-ink/40">{v.code}</span>
+                <span className="w-14 shrink-0 text-[11px] tracking-wider text-brand-ink/40">{v.code}</span>
                 <span className="flex-1 text-[12.5px] text-brand-ink/70">{v.title}</span>
               </button>
             </li>
@@ -881,16 +883,16 @@ function RightPanel({
         </ul>
       </div>
 
-      {/* PDF viewer */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="flex items-baseline justify-between px-6 pt-6">
+      {/* PDF viewer — fixed height */}
+      <div className="flex h-[500px] shrink-0 flex-col">
+        <div className="flex items-baseline justify-between px-6 pt-5">
           <div className="text-[11px] tracking-[0.16em] text-brand-ink/35 uppercase">
             Documento original
           </div>
           <span className="text-[11px] text-brand-ink/35">p. 47</span>
         </div>
-        <div className="flex-1 overflow-y-auto px-6 pt-4 pb-6">
-          <div className="mx-auto aspect-[3/4] w-full overflow-hidden rounded-md border border-brand-ink/8 bg-white p-5 text-[10px] leading-relaxed text-brand-ink/65 shadow-[0_1px_2px_rgba(34,24,74,0.04)]">
+        <div className="flex min-h-0 flex-1 px-6 pt-3 pb-5">
+          <div className="w-full overflow-hidden rounded-md border border-brand-ink/8 bg-white p-5 text-[10px] leading-relaxed text-brand-ink/65 shadow-[0_1px_2px_rgba(34,24,74,0.04)]">
             <div className="border-b border-brand-ink/10 pb-2 text-center text-[9px] tracking-[0.14em] text-brand-ink/45 uppercase">
               NSR-10 · Título A
             </div>
