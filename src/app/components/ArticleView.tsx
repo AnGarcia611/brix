@@ -410,7 +410,7 @@ function CenterContent({
       </div>
 
       <div className="mt-10 flex-1 overflow-y-auto px-12 pb-14">
-        <div className="mx-auto max-w-[640px]">
+        <div className="max-w-[640px]">
           <BlocksRenderer blocks={article.body} mode={mode} onOpen={onOpen} />
 
           <AnimatePresence initial={false}>
@@ -568,7 +568,7 @@ function BlockItem({
               {block.title}
             </span>
           </div>
-          <div className="pl-[76px]">
+          <div className="ml-1 border-l border-brand-ink/10 pl-5">
             <BlocksRenderer blocks={block.items} mode={mode} onOpen={onOpen} depth={depth + 1} />
           </div>
         </div>
