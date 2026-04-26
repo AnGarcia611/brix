@@ -858,7 +858,10 @@ function RightPanel({
         </div>
 
         {/* Visited nodes as a memory list — scrollable */}
-        <ul className="min-h-0 flex-1 overflow-y-scroll px-6 pb-6 space-y-0.5" style={{ scrollbarGutter: 'stable' }}>
+        <ul
+          className="min-h-0 flex-1 overflow-y-scroll px-6 pb-6 space-y-0.5"
+          style={{ scrollbarGutter: "stable" }}
+        >
           {visits.map((v) => (
             <li key={v.code}>
               <button
@@ -875,7 +878,9 @@ function RightPanel({
                   }`}
                   aria-hidden
                 />
-                <span className="w-14 shrink-0 text-[11px] tracking-wider text-brand-ink/40">{v.code}</span>
+                <span className="w-14 shrink-0 text-[11px] tracking-wider text-brand-ink/40">
+                  {v.code}
+                </span>
                 <span className="flex-1 text-[12.5px] text-brand-ink/70">{v.title}</span>
               </button>
             </li>
