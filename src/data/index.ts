@@ -15,17 +15,32 @@ export const ARTICLES: Record<string, Article> = Object.fromEntries(
 // ─── REFS — alias de ARTICLES; mismo formato que consume CrossRefPanel ───────
 export const REFS = ARTICLES
 
+// ─── Hijos directos: artículos exactamente un nivel más profundos ────────────
+export function getChildren(code: string): Article[] {
+  const prefix = code + "."
+  return Object.values(ARTICLES).filter((a) => {
+    if (!a.code.startsWith(prefix)) return false
+    const rest = a.code.slice(prefix.length)
+    return !rest.includes(".")
+  })
+}
+
 // ─── Índice de búsqueda — query → código de artículo ────────────────────────
 export const SEARCH_INDEX: { q: string; ref: string }[] = [
-  { q: "alcance cargas", ref: "B.1.1" },
-  { q: "cargas de diseño", ref: "B.1.1" },
-  { q: "requisitos básicos", ref: "B.1.2" },
-  { q: "resistencia estructura", ref: "B.1.2" },
-  { q: "funcionamiento rigidez deflexiones", ref: "B.1.2" },
-  { q: "deformaciones impuestas temperatura retracción", ref: "B.1.2" },
-  { q: "análisis estructural equilibrio", ref: "B.1.2" },
-  { q: "integridad estructural colapso progresivo", ref: "B.1.3" },
-  { q: "ductilidad continuidad amarre", ref: "B.1.3" },
-  { q: "trayectoria de cargas", ref: "B.1.4" },
-  { q: "diafragma fuerzas horizontales", ref: "B.1.4" },
+  { q: "alcance cargas diseño mínimo", ref: "B.1.1" },
+  { q: "cargas de diseño edificaciones", ref: "B.1.1" },
+  { q: "requisitos básicos estructura partes", ref: "B.1.2" },
+  { q: "requisitos resistencia funcionamiento análisis", ref: "B.1.2.1" },
+  { q: "resistencia elementos conexiones coeficientes de carga", ref: "B.1.2.1.1" },
+  { q: "funcionamiento rigidez deflexiones derivas vibraciones", ref: "B.1.2.1.2" },
+  { q: "deformaciones impuestas temperatura retracción asentamientos", ref: "B.1.2.1.3" },
+  { q: "análisis estructural equilibrio estabilidad compatibilidad", ref: "B.1.2.1.4" },
+  { q: "integridad estructural unidad general", ref: "B.1.3" },
+  { q: "amarre sismo título A concreto reforzado C.7.13", ref: "B.1.3.1" },
+  { q: "colapso progresivo daño local estabilidad general", ref: "B.1.3.2" },
+  { q: "ductilidad continuidad redistribución cargas", ref: "B.1.3.3" },
+  { q: "trayectoria de cargas sistema estructural", ref: "B.1.4" },
+  { q: "trayectoria continua solicitaciones diseño", ref: "B.1.4.1" },
+  { q: "capacidad resistente cimentación apoyo fuerzas", ref: "B.1.4.2" },
+  { q: "diafragma fuerzas horizontales viento sismo empuje", ref: "B.1.4.3" },
 ]

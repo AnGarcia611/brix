@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from "motion/react"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { CrossRefStack } from "./CrossRefPanel"
-import { TREE, ARTICLES, REFS } from "../../data"
-import type { Block, Article as ArticleData, TreeChapter } from "../../data/types"
+import { TREE, ARTICLES, REFS, getChildren } from "../../data"
+import type { Block, Article as ArticleData, TreeChapter, TreeItem } from "../../data/types"
 
 type Mode = "lectura" | "datos" | "relacion"
 type Visit = { code: string; title: string; at: number }
@@ -58,7 +58,7 @@ export function ArticleView({ onHome }: { onHome: () => void; onRestart: () => v
     }, 60)
   }
 
-  const gridCols = `${leftOpen ? "260px" : "44px"} 1fr ${rightOpen ? "400px" : "44px"}`
+  const gridCols = `${leftOpen ? "390px" : "44px"} 1fr ${rightOpen ? "400px" : "44px"}`
 
   return (
     <div
@@ -273,30 +273,74 @@ function ChapterSection({
       </button>
       {expanded && chapter.items.length > 0 && (
         <div className="mt-0.5 ml-3 border-l border-brand-ink/8 pl-2">
-          {chapter.items.map((item) => {
-            const active = item.code === currentCode
-            return (
-              <button
-                key={item.code}
-                onClick={() => onSelect(item.code)}
-                className={`relative flex w-full items-baseline gap-3 rounded-md px-3 py-2 text-left text-sm outline-none transition-colors duration-150 ${
-                  active
-                    ? "bg-brand-accent/10 text-brand-accent"
-                    : "text-brand-ink/65 hover:bg-brand-ink/4 hover:text-brand-ink"
-                }`}
-                style={{ fontWeight: active ? 500 : 400 }}
-              >
-                {active && (
-                  <span
-                    aria-hidden
-                    className="absolute -left-[9px] top-1.5 bottom-1.5 w-[2px] rounded-full bg-brand-accent"
-                  />
-                )}
-                <span className="w-10 text-xs tracking-wider text-brand-ink/40">{item.code}</span>
-                <span>{item.title}</span>
-              </button>
-            )
-          })}
+          {chapter.items.map((item) => (
+            <NavItem key={item.code} item={item} currentCode={currentCode} onSelect={onSelect} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function NavItem({
+  item,
+  currentCode,
+  onSelect,
+}: {
+  item: TreeItem
+  currentCode: string
+  onSelect: (code: string) => void
+}) {
+  const hasChildren = (item.children?.length ?? 0) > 0
+  const isActive = item.code === currentCode
+  const isAncestor = currentCode.startsWith(item.code + ".")
+  const [expanded, setExpanded] = useState(isActive || isAncestor)
+
+  useEffect(() => {
+    if (currentCode.startsWith(item.code + ".")) setExpanded(true)
+  }, [currentCode, item.code])
+
+  return (
+    <div className="mb-0.5">
+      <div className="flex items-stretch">
+        <button
+          onClick={() => onSelect(item.code)}
+          className={`relative flex min-w-0 flex-1 items-baseline gap-3 rounded-md px-3 py-2 text-left text-sm outline-none transition-colors duration-150 ${
+            isActive
+              ? "bg-brand-accent/10 text-brand-accent"
+              : "text-brand-ink/65 hover:bg-brand-ink/4 hover:text-brand-ink"
+          }`}
+          style={{ fontWeight: isActive ? 500 : 400 }}
+        >
+          {isActive && (
+            <span
+              aria-hidden
+              className="absolute -left-[9px] top-1.5 bottom-1.5 w-[2px] rounded-full bg-brand-accent"
+            />
+          )}
+          <span className="shrink-0 text-xs tracking-wider text-brand-ink/40">{item.code}</span>
+          <span className="truncate">{item.title}</span>
+        </button>
+        {hasChildren && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            aria-label={expanded ? "Contraer" : "Expandir"}
+            className="flex items-center px-2 text-brand-ink/25 outline-none transition-colors hover:text-brand-ink/50 focus-visible:text-brand-ink/50"
+          >
+            <span
+              className="inline-block text-base transition-transform duration-150"
+              style={{ transform: expanded ? "rotate(90deg)" : "rotate(0deg)" }}
+            >
+              ›
+            </span>
+          </button>
+        )}
+      </div>
+      {hasChildren && expanded && (
+        <div className="ml-3 border-l border-brand-ink/8 pl-2">
+          {item.children!.map((child) => (
+            <NavItem key={child.code} item={child} currentCode={currentCode} onSelect={onSelect} />
+          ))}
         </div>
       )}
     </div>
@@ -391,7 +435,11 @@ function CenterContent({
                 transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
                 className="mt-10"
               >
-                <RelationOverlay related={article.related} onOpen={onOpen} />
+                <RelationOverlay
+                  related={article.related}
+                  children={getChildren(article.code)}
+                  onOpen={onOpen}
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -640,12 +688,17 @@ function DataOverlay({ tables }: { tables: Extract<Block, { type: "table" }>[] }
 
 function RelationOverlay({
   related,
+  children,
   onOpen,
 }: {
   related: { code: string; title: string }[]
+  children: { code: string; title: string; summary: string }[]
   onOpen: (c: string) => void
 }) {
-  if (related.length === 0) {
+  const hasChildren = children.length > 0
+  const hasRelated = related.length > 0
+
+  if (!hasChildren && !hasRelated) {
     return (
       <div className="border-t border-brand-ink/8 pt-8">
         <div className="text-[11px] tracking-[0.14em] text-brand-ink/40 uppercase">
@@ -657,38 +710,81 @@ function RelationOverlay({
       </div>
     )
   }
+
   return (
-    <div className="border-t border-brand-ink/8 pt-8">
-      <div className="text-[11px] tracking-[0.14em] text-brand-ink/40 uppercase">
-        Referencias conectadas
-      </div>
-      <div className="mt-3 divide-y divide-brand-ink/8">
-        {related.map((it) => (
-          <button
-            key={it.code}
-            onClick={() => onOpen(it.code)}
-            className="group flex w-full items-baseline gap-6 py-4 text-left outline-none"
-          >
-            <div className="w-16 text-xs tracking-wider text-brand-ink/45 transition-colors duration-150 group-hover:text-brand-accent">
-              {it.code}
-            </div>
-            <div className="flex-1">
-              <div
-                className="text-[15px] text-brand-ink transition-colors duration-150 group-hover:text-brand-accent"
-                style={{ fontWeight: 500 }}
+    <div className="space-y-8">
+      {hasChildren && (
+        <div className="border-t border-brand-ink/8 pt-8">
+          <div className="text-[11px] tracking-[0.14em] text-brand-ink/40 uppercase">
+            Subsecciones
+          </div>
+          <div className="mt-3 divide-y divide-brand-ink/8">
+            {children.map((child) => (
+              <button
+                key={child.code}
+                onClick={() => onOpen(child.code)}
+                className="group flex w-full items-start gap-6 py-4 text-left outline-none"
               >
-                {it.title}
-              </div>
-            </div>
-            <span
-              aria-hidden
-              className="text-brand-ink/30 transition-all duration-150 group-hover:translate-x-0.5 group-hover:text-brand-accent"
-            >
-              →
-            </span>
-          </button>
-        ))}
-      </div>
+                <div className="w-16 shrink-0 text-xs tracking-wider text-brand-ink/45 transition-colors duration-150 group-hover:text-brand-accent">
+                  {child.code}
+                </div>
+                <div className="flex-1">
+                  <div
+                    className="text-[15px] text-brand-ink transition-colors duration-150 group-hover:text-brand-accent"
+                    style={{ fontWeight: 500 }}
+                  >
+                    {child.title}
+                  </div>
+                  {child.summary && (
+                    <div className="mt-0.5 text-[13px] text-brand-ink/50">{child.summary}</div>
+                  )}
+                </div>
+                <span
+                  aria-hidden
+                  className="mt-0.5 text-brand-ink/30 transition-all duration-150 group-hover:translate-x-0.5 group-hover:text-brand-accent"
+                >
+                  →
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {hasRelated && (
+        <div className={hasChildren ? "" : "border-t border-brand-ink/8 pt-8"}>
+          <div className="text-[11px] tracking-[0.14em] text-brand-ink/40 uppercase">
+            Referencias cruzadas
+          </div>
+          <div className="mt-3 divide-y divide-brand-ink/8">
+            {related.map((it) => (
+              <button
+                key={it.code}
+                onClick={() => onOpen(it.code)}
+                className="group flex w-full items-baseline gap-6 py-4 text-left outline-none"
+              >
+                <div className="w-16 text-xs tracking-wider text-brand-ink/45 transition-colors duration-150 group-hover:text-brand-accent">
+                  {it.code}
+                </div>
+                <div className="flex-1">
+                  <div
+                    className="text-[15px] text-brand-ink transition-colors duration-150 group-hover:text-brand-accent"
+                    style={{ fontWeight: 500 }}
+                  >
+                    {it.title}
+                  </div>
+                </div>
+                <span
+                  aria-hidden
+                  className="text-brand-ink/30 transition-all duration-150 group-hover:translate-x-0.5 group-hover:text-brand-accent"
+                >
+                  →
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
