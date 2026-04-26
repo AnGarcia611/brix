@@ -1,28 +1,22 @@
-import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { Shell } from "./components/Shell";
-import { Welcome } from "./components/Welcome";
-import { DirectSearch } from "./components/DirectSearch";
-import { Guided } from "./components/Guided";
-import { Result } from "./components/Result";
+import { useState } from "react"
+import { AnimatePresence, motion } from "motion/react"
+import { Shell } from "./components/Shell"
+import { Welcome } from "./components/Welcome"
+import { DirectSearch } from "./components/DirectSearch"
+import { GuidedSearch } from "./components/GuidedSearch"
+import { ArticleView } from "./components/ArticleView"
 
-type Screen = "welcome" | "direct" | "guided" | "result";
+type Screen = "welcome" | "direct" | "guided" | "result"
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("welcome");
-  const home = () => setScreen("welcome");
+  const [screen, setScreen] = useState<Screen>("welcome")
+  const home = () => setScreen("welcome")
 
   return (
     <Shell
       onHome={home}
       mark={screen === "result"}
-      ambient={
-        screen === "welcome"
-          ? "strong"
-          : screen === "result"
-          ? "none"
-          : "soft"
-      }
+      ambient={screen === "welcome" ? "strong" : screen === "result" ? "none" : "soft"}
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -40,11 +34,11 @@ export default function App() {
             <DirectSearch onBack={home} onResult={() => setScreen("result")} />
           )}
           {screen === "guided" && (
-            <Guided onBack={home} onResult={() => setScreen("result")} />
+            <GuidedSearch onBack={home} onResult={() => setScreen("result")} />
           )}
-          {screen === "result" && <Result onHome={home} onRestart={home} />}
+          {screen === "result" && <ArticleView onHome={home} onRestart={home} />}
         </motion.div>
       </AnimatePresence>
     </Shell>
-  );
+  )
 }

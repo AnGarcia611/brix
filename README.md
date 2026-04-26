@@ -8,14 +8,14 @@ Interactive consultation tool for Colombia's NSR-10 seismic building code. Built
 
 ## Stack
 
-| Tool | Version |
-|---|---|
-| React | 19 |
-| Vite | 6 |
-| Tailwind CSS | v4 |
-| Motion (Framer) | 12 |
-| Lucide React | latest |
-| Runtime | [Bun](https://bun.sh) |
+| Tool            | Version               |
+| --------------- | --------------------- |
+| React           | 19                    |
+| Vite            | 6                     |
+| Tailwind CSS    | v4                    |
+| Motion (Framer) | 12                    |
+| Lucide React    | latest                |
+| Runtime         | [Bun](https://bun.sh) |
 
 ## Getting started
 
@@ -47,8 +47,8 @@ src/
       Shell.tsx          # layout wrapper + navbar
       Welcome.tsx        # landing screen
       DirectSearch.tsx   # free-text article search
-      Guided.tsx         # step-by-step query flow
-      Result.tsx         # consultation result
+      GuidedSearch.tsx   # step-by-step query flow
+      ArticleView.tsx    # consultation result
       CrossRefPanel.tsx  # related articles panel
       Ambient.tsx        # animated background gradient
       brix-ui.tsx        # design system (Button, Chip, Card, Stepper, Tag)
@@ -57,6 +57,28 @@ src/
     tailwind.css         # Tailwind entry
     index.css            # global base styles
 ```
+
+## Screens
+
+La app usa un state machine en `App.tsx` (`screen` state) en lugar de un router. Las pantallas principales son:
+
+| Componente         | Screen key  | Descripción                                                          |
+| ------------------ | ----------- | -------------------------------------------------------------------- |
+| `Welcome.tsx`      | `"welcome"` | Pantalla de inicio; el usuario elige entre los dos modos de consulta |
+| `DirectSearch.tsx` | `"direct"`  | Búsqueda directa por texto o código de artículo                      |
+| `GuidedSearch.tsx` | `"guided"`  | Flujo guiado paso a paso por preguntas                               |
+| `ArticleView.tsx`  | `"result"`  | Muestra el resultado de la consulta                                  |
+
+Flujo: `Welcome` → `DirectSearch` o `Guided` → `Result`.
+
+Componentes de soporte (no son pantallas):
+
+| Componente          | Rol                                                         |
+| ------------------- | ----------------------------------------------------------- |
+| `Shell.tsx`         | Layout envolvente (header, fondo, navegación)               |
+| `Ambient.tsx`       | Efecto de gradiente animado en el fondo                     |
+| `CrossRefPanel.tsx` | Panel auxiliar de referencias cruzadas                      |
+| `brix-ui.tsx`       | Sistema de diseño propio (Button, Chip, Card, Stepper, Tag) |
 
 ## Design tokens
 

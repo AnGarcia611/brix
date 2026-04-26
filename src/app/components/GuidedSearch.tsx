@@ -1,10 +1,10 @@
-import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react"
+import { useState } from "react"
 
 type Question = {
-  title: string;
-  options: { value: string; label: string; description: string }[];
-};
+  title: string
+  options: { value: string; label: string; description: string }[]
+}
 
 const STEPS: Question[] = [
   {
@@ -52,34 +52,28 @@ const STEPS: Question[] = [
       { value: "todo", label: "Todo", description: "Consulta completa" },
     ],
   },
-];
+]
 
-export function Guided({
-  onBack,
-  onResult,
-}: {
-  onBack: () => void;
-  onResult: () => void;
-}) {
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
+export function GuidedSearch({ onBack, onResult }: { onBack: () => void; onResult: () => void }) {
+  const [step, setStep] = useState(0)
+  const [answers, setAnswers] = useState<string[]>([])
 
-  const q = STEPS[step];
+  const q = STEPS[step]
 
   const select = (v: string) => {
-    const next = [...answers];
-    next[step] = v;
-    setAnswers(next);
+    const next = [...answers]
+    next[step] = v
+    setAnswers(next)
     setTimeout(() => {
-      if (step + 1 >= STEPS.length) onResult();
-      else setStep(step + 1);
-    }, 240);
-  };
+      if (step + 1 >= STEPS.length) onResult()
+      else setStep(step + 1)
+    }, 240)
+  }
 
   const back = () => {
-    if (step === 0) onBack();
-    else setStep(step - 1);
-  };
+    if (step === 0) onBack()
+    else setStep(step - 1)
+  }
 
   return (
     <div className="mx-auto flex min-h-[calc(100vh-88px)] max-w-[760px] flex-col px-10 pt-16">
@@ -90,7 +84,7 @@ export function Guided({
         >
           ← Atrás
         </button>
-          <span className="text-[13px] tracking-wider text-brand-ink/45">
+        <span className="text-[13px] tracking-wider text-brand-ink/45">
           {step + 1} / {STEPS.length}
         </span>
       </div>
@@ -120,7 +114,12 @@ export function Guided({
           className="mt-16"
         >
           <h1
-            style={{ fontSize: "clamp(1.75rem, 3vw, 2.25rem)", fontWeight: 500, letterSpacing: "-0.015em", lineHeight: 1.15 }}
+            style={{
+              fontSize: "clamp(1.75rem, 3vw, 2.25rem)",
+              fontWeight: 500,
+              letterSpacing: "-0.015em",
+              lineHeight: 1.15,
+            }}
             className="text-brand-ink"
           >
             {q.title}
@@ -128,7 +127,7 @@ export function Guided({
 
           <div className="mt-10 grid gap-3 md:grid-cols-2">
             {q.options.map((opt, i) => {
-              const selected = answers[step] === opt.value;
+              const selected = answers[step] === opt.value
               return (
                 <motion.button
                   key={opt.value}
@@ -150,22 +149,32 @@ export function Guided({
                   </div>
                   <div
                     className={`flex h-5 w-5 items-center justify-center rounded-full border transition-all duration-200 ${
-                      selected ? "border-brand-green bg-brand-green" : "border-brand-ink/20 group-hover:border-brand-accent/40"
+                      selected
+                        ? "border-brand-green bg-brand-green"
+                        : "border-brand-ink/20 group-hover:border-brand-accent/40"
                     }`}
                     aria-hidden
                   >
                     {selected && (
-                      <svg viewBox="0 0 10 10" className="h-2.5 w-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        viewBox="0 0 10 10"
+                        className="h-2.5 w-2.5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <path d="M2 5.2 4.2 7.4 8.2 2.6" />
                       </svg>
                     )}
                   </div>
                 </motion.button>
-              );
+              )
             })}
           </div>
         </motion.div>
       </AnimatePresence>
     </div>
-  );
+  )
 }
