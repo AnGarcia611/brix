@@ -1,10 +1,6 @@
-import { motion } from "motion/react";
+import { motion } from "motion/react"
 
-export function Welcome({
-  onPick,
-}: {
-  onPick: (mode: "direct" | "guided") => void;
-}) {
+export function Welcome({ onPick }: { onPick: (mode: "direct" | "guided") => void }) {
   return (
     <div className="relative">
       <div className="relative mx-auto flex min-h-[calc(100vh-88px)] max-w-[1120px] flex-col justify-center px-10 pb-24">
@@ -14,23 +10,29 @@ export function Welcome({
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-[820px] text-center"
         >
-          <div className="text-[11px] tracking-[0.22em] text-brand-ink/45 uppercase">
-            NSR-10
-          </div>
-
           <h1
             style={{
-              fontSize: "clamp(2.75rem, 5.4vw, 4rem)",
-              lineHeight: 1.08,
-              fontWeight: 500,
-              letterSpacing: "-0.032em",
+              fontSize: "clamp(3.5rem, 7vw, 6rem)",
+              lineHeight: 1.0,
+              fontWeight: 600,
+              letterSpacing: "-0.04em",
             }}
-            className="mt-7 text-brand-ink"
+            className="mt-4 text-brand-ink"
           >
-            Nueva experiencia
-            <br />
-            de consulta
+            NSR-10
           </h1>
+
+          <p
+            style={{
+              fontSize: "clamp(1.25rem, 2.2vw, 1.75rem)",
+              letterSpacing: "-0.015em",
+              fontWeight: 400,
+              lineHeight: 1.3,
+            }}
+            className="mt-5 text-brand-ink/55"
+          >
+            Nueva experiencia de consulta
+          </p>
 
           <p
             style={{
@@ -63,7 +65,7 @@ export function Welcome({
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function Option({
@@ -73,11 +75,11 @@ function Option({
   onClick,
   delay,
 }: {
-  index: string;
-  label: string;
-  description: string;
-  onClick: () => void;
-  delay: number;
+  index: string
+  label: string
+  description: string
+  onClick: () => void
+  delay: number
 }) {
   return (
     <motion.button
@@ -90,9 +92,7 @@ function Option({
       className="group relative flex h-[260px] flex-col justify-between overflow-hidden rounded-[16px] border border-brand-ink/8 bg-white/80 p-10 text-left outline-none backdrop-blur-xl shadow-[0_1px_2px_rgba(34,24,74,0.03),0_12px_32px_-20px_rgba(34,24,74,0.14)] transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:border-brand-accent/25 hover:bg-white hover:shadow-[0_2px_4px_rgba(34,24,74,0.04),0_24px_52px_-24px_rgba(34,24,74,0.22)] focus-visible:border-brand-accent focus-visible:ring-4 focus-visible:ring-brand-accent/15"
     >
       <div className="flex items-start justify-between">
-        <span className="text-[11px] tracking-[0.22em] text-brand-ink/35">
-          {index}
-        </span>
+        <span className="text-[11px] tracking-[0.22em] text-brand-ink/35">{index}</span>
         <span
           aria-hidden
           className="block h-px w-6 bg-brand-ink/15 transition-all duration-500 ease-out group-hover:w-14 group-hover:bg-brand-accent"
@@ -127,5 +127,5 @@ function Option({
         </div>
       </div>
     </motion.button>
-  );
+  )
 }
