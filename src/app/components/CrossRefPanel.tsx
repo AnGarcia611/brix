@@ -200,7 +200,9 @@ function PanelContent({
 
       {readonly && (
         <div className="flex items-center justify-between gap-3 border-t border-[#22184A]/8 bg-white px-6 py-4">
-          <span className="text-xs text-brand-ink/50">Abre el artículo y registra el recorrido</span>
+          <span className="text-xs text-brand-ink/50">
+            Abre el artículo y registra el recorrido
+          </span>
           <Button variant="soft" onClick={() => onPromote(ref_.code)}>
             <ExternalLink className="h-4 w-4" /> Agregar a la consulta
           </Button>

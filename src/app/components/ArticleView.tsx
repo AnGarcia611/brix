@@ -506,36 +506,36 @@ function CenterContent({
           <BlocksRenderer blocks={article.body} mode={mode} onOpen={onOpen} />
 
           <div ref={extrasRef}>
-          <AnimatePresence initial={false}>
-            {mode === "datos" && (
-              <motion.div
-                key="datos"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -3 }}
-                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                className="mt-10"
-              >
-                <DataOverlay tables={tables} />
-              </motion.div>
-            )}
-            {mode === "relacion" && (
-              <motion.div
-                key="relacion"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -3 }}
-                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                className="mt-10"
-              >
-                <RelationOverlay
-                  related={article.related}
-                  children={getChildren(article.code)}
-                  onOpen={onOpen}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+            <AnimatePresence initial={false}>
+              {mode === "datos" && (
+                <motion.div
+                  key="datos"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -3 }}
+                  transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                  className="mt-10"
+                >
+                  <DataOverlay tables={tables} />
+                </motion.div>
+              )}
+              {mode === "relacion" && (
+                <motion.div
+                  key="relacion"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -3 }}
+                  transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                  className="mt-10"
+                >
+                  <RelationOverlay
+                    related={article.related}
+                    children={getChildren(article.code)}
+                    onOpen={onOpen}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
@@ -768,7 +768,7 @@ function DataOverlay({ tables }: { tables: Extract<Block, { type: "table" }>[] }
               className="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] text-brand-ink/40 outline-none transition-colors duration-150 hover:bg-brand-ink/6 hover:text-brand-ink/70 focus-visible:ring-2 focus-visible:ring-brand-accent/30"
             >
               <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="currentColor">
-                <path d="M2 13h12v1.5H2V13zm5.25-2.25V3h1.5v7.75l2.97-2.97 1.06 1.06L8 13.62l-4.78-4.78 1.06-1.06 2.97 2.97z"/>
+                <path d="M2 13h12v1.5H2V13zm5.25-2.25V3h1.5v7.75l2.97-2.97 1.06 1.06L8 13.62l-4.78-4.78 1.06-1.06 2.97 2.97z" />
               </svg>
               Excel
             </button>

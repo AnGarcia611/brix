@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
-import BrixLogo from "../../imports/Group1/Group1";
-import BrixMark from "../../imports/Group2/Group2";
-import { Ambient } from "./Ambient";
+import { ReactNode } from "react"
+import BrixLogo from "../../imports/Group1/Group1"
+import BrixMark from "../../imports/Group2/Group2"
+import { Ambient } from "./Ambient"
 
 export function Shell({
   children,
@@ -10,11 +10,11 @@ export function Shell({
   mark,
   ambient = "soft",
 }: {
-  children: ReactNode;
-  onHome: () => void;
-  onNew?: () => void;
-  mark?: boolean;
-  ambient?: "strong" | "soft" | "none";
+  children: ReactNode
+  onHome: () => void
+  onNew?: () => void
+  mark?: boolean
+  ambient?: "strong" | "soft" | "none"
 }) {
   return (
     <div className="relative isolate flex h-full min-h-screen w-full flex-col overflow-hidden bg-white text-brand-ink">
@@ -49,5 +49,5 @@ export function Shell({
 
       <main className="relative z-10 flex-1">{children}</main>
     </div>
-  );
+  )
 }
