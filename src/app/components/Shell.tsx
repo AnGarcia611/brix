@@ -6,11 +6,13 @@ import { Ambient } from "./Ambient";
 export function Shell({
   children,
   onHome,
+  onNew,
   mark,
   ambient = "soft",
 }: {
   children: ReactNode;
   onHome: () => void;
+  onNew?: () => void;
   mark?: boolean;
   ambient?: "strong" | "soft" | "none";
 }) {
@@ -18,7 +20,7 @@ export function Shell({
     <div className="relative isolate flex h-full min-h-screen w-full flex-col overflow-hidden bg-white text-brand-ink">
       <Ambient intensity={ambient} />
 
-      <header className="relative z-30 flex items-center justify-between px-10 py-6">
+      <header className="relative flex items-center justify-between px-10 py-6">
         <button
           onClick={onHome}
           aria-label="BRIX — Inicio"
@@ -35,6 +37,14 @@ export function Shell({
           )}
         </button>
 
+        {onNew && (
+          <button
+            onClick={onNew}
+            className="rounded-md px-3 py-1.5 text-[13px] text-brand-ink/45 outline-none transition-colors duration-150 hover:bg-brand-ink/5 hover:text-brand-ink focus-visible:ring-2 focus-visible:ring-brand-accent/30"
+          >
+            Nueva consulta
+          </button>
+        )}
       </header>
 
       <main className="relative z-10 flex-1">{children}</main>

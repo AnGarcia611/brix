@@ -1,11 +1,37 @@
 import { motion, AnimatePresence } from "motion/react"
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
+import * as XLSX from "xlsx"
 import { CrossRefStack } from "./CrossRefPanel"
 import { TREE, ARTICLES, REFS, getChildren } from "../../data"
 import type { Block, Article as ArticleData, TreeChapter, TreeItem } from "../../data/types"
 
 type Mode = "lectura" | "datos" | "relacion"
 type Visit = { code: string; title: string; at: number }
+
+// Colors per chapter index (cycling), using brand palette from theme.css
+const CHAPTER_COLORS = [
+  "#0DE77A", // green   — capítulo 1
+  "#597CFF", // blue    — capítulo 2
+  "#D269E6", // pink    — capítulo 3
+  "#14CEDB", // cyan    — capítulo 4
+  "#FE4F54", // red     — capítulo 5
+  "#A548FF", // purple  — capítulo 6
+  "#8B3DFF", // violet  — capítulo 7
+  "#8C69F9", // violet-soft — capítulo 8
+]
+
+function chapterColor(code: string, alpha = 1): string {
+  // code like "B.1.2" — chapter is the second segment parsed as integer
+  const parts = code.split(".")
+  const chapterNum = parts.length >= 2 ? parseInt(parts[1], 10) : 1
+  const hex = CHAPTER_COLORS[(chapterNum - 1) % CHAPTER_COLORS.length] ?? CHAPTER_COLORS[0]
+  if (alpha >= 1) return hex!
+  // Convert hex to rgba
+  const r = parseInt(hex!.slice(1, 3), 16)
+  const g = parseInt(hex!.slice(3, 5), 16)
+  const b = parseInt(hex!.slice(5, 7), 16)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
 
 const FIRST_CODE = Object.keys(ARTICLES)[0] ?? "B.1.1"
 
@@ -35,7 +61,6 @@ export function ArticleView({ onHome }: { onHome: () => void; onRestart: () => v
 
   const navigateTo = (code: string) => {
     setCurrentCode(code)
-    setMode("lectura")
     recordVisit(code)
     setFocusVisit(code)
   }
@@ -48,14 +73,12 @@ export function ArticleView({ onHome }: { onHome: () => void; onRestart: () => v
   const back = () => setStack((s) => s.slice(0, -1))
   const close = () => setStack([])
   const promote = (code: string) => {
+    // Record all articles visited in the stack panels
+    const toRecord = [...stack, code]
     setStack([])
     setCurrentCode(code)
-    setMode("lectura")
-    setTimeout(() => {
-      setStack([code])
-      recordVisit(code)
-      setFocusVisit(code)
-    }, 60)
+    toRecord.forEach((c) => recordVisit(c))
+    setFocusVisit(code)
   }
 
   const gridCols = `${leftOpen ? "390px" : "44px"} 1fr ${rightOpen ? "400px" : "44px"}`
@@ -118,8 +141,7 @@ function LeftNav({
     <aside className="flex flex-col overflow-hidden border-r border-brand-ink/8 bg-white">
       <div className="flex items-start justify-between px-6 pt-8 pb-4">
         <div>
-          <div className="text-[11px] tracking-[0.14em] text-brand-ink/40 uppercase">NSR-10</div>
-          <div className="mt-1 text-[15px] text-brand-ink" style={{ fontWeight: 500 }}>
+          <div className="text-[15px] text-brand-ink" style={{ fontWeight: 500 }}>
             Estructura
           </div>
         </div>
@@ -140,23 +162,57 @@ function LeftNav({
   )
 }
 
+// left side: left arrow solid, right arrow outline
+const CURSOR_LEFT = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='10'%3E%3Cpolygon points='0,5 8,0 8,10' fill='%23555'/%3E%3Cpolygon points='22,5 14,0 14,10' fill='none' stroke='%23555' stroke-width='1.5'/%3E%3C/svg%3E") 11 5, col-resize`
+// right side: right arrow solid, left arrow outline
+const CURSOR_RIGHT = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='10'%3E%3Cpolygon points='0,5 8,0 8,10' fill='none' stroke='%23555' stroke-width='1.5'/%3E%3Cpolygon points='22,5 14,0 14,10' fill='%23555'/%3E%3C/svg%3E") 11 5, col-resize`
+
 function CollapseBtn({ side, onClick }: { side: "left" | "right"; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
       aria-label={side === "left" ? "Ocultar estructura" : "Ocultar índice"}
+      style={{ cursor: side === "left" ? CURSOR_LEFT : CURSOR_RIGHT }}
       className="flex h-7 w-7 items-center justify-center rounded-md text-brand-ink/45 outline-none transition-colors duration-150 hover:bg-brand-ink/5 hover:text-brand-ink focus-visible:ring-2 focus-visible:ring-brand-accent/30"
     >
-      <svg
-        viewBox="0 0 16 16"
-        className="h-3.5 w-3.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        {side === "left" ? <path d="M10 3 5 8l5 5" /> : <path d="M6 3l5 5-5 5" />}
+      <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor">
+        {side === "left" ? (
+          <>
+            {/* outer border */}
+            <rect
+              x="1"
+              y="2"
+              width="14"
+              height="12"
+              rx="1.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            {/* left panel filled */}
+            <rect x="1" y="2" width="4.5" height="12" rx="1.5" />
+            {/* vertical divider */}
+            <line x1="5.5" y1="2" x2="5.5" y2="14" stroke="currentColor" strokeWidth="1.2" />
+          </>
+        ) : (
+          <>
+            {/* outer border */}
+            <rect
+              x="1"
+              y="2"
+              width="14"
+              height="12"
+              rx="1.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            {/* right panel filled */}
+            <rect x="10.5" y="2" width="4.5" height="12" rx="1.5" />
+            {/* vertical divider */}
+            <line x1="10.5" y1="2" x2="10.5" y2="14" stroke="currentColor" strokeWidth="1.2" />
+          </>
+        )}
       </svg>
     </button>
   )
@@ -182,16 +238,38 @@ function CollapsedRail({
         aria-label={`Mostrar ${label}`}
         className="flex h-11 w-full items-center justify-center text-brand-ink/50 outline-none transition-colors duration-150 hover:bg-brand-ink/4 hover:text-brand-ink focus-visible:bg-brand-ink/4"
       >
-        <svg
-          viewBox="0 0 16 16"
-          className="h-3.5 w-3.5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          {side === "left" ? <path d="M6 3l5 5-5 5" /> : <path d="M10 3 5 8l5 5" />}
+        <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor">
+          {side === "left" ? (
+            <>
+              <rect
+                x="1"
+                y="2"
+                width="14"
+                height="12"
+                rx="1.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.2"
+              />
+              <rect x="1" y="2" width="4.5" height="12" rx="1.5" />
+              <line x1="5.5" y1="2" x2="5.5" y2="14" stroke="currentColor" strokeWidth="1.2" />
+            </>
+          ) : (
+            <>
+              <rect
+                x="1"
+                y="2"
+                width="14"
+                height="12"
+                rx="1.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.2"
+              />
+              <rect x="10.5" y="2" width="4.5" height="12" rx="1.5" />
+              <line x1="10.5" y1="2" x2="10.5" y2="14" stroke="currentColor" strokeWidth="1.2" />
+            </>
+          )}
         </svg>
       </button>
       <button
@@ -369,6 +447,20 @@ function CenterContent({
   setMode: (m: Mode) => void
   onOpen: (c: string) => void
 }) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const extrasRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (mode === "lectura") return
+    const frame = requestAnimationFrame(() => {
+      const container = scrollRef.current
+      const target = extrasRef.current
+      if (!container || !target) return
+      container.scrollTo({ top: target.offsetTop, behavior: "smooth" })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [mode])
+
   if (!article) return null
 
   const parts = article.code.split(".")
@@ -409,10 +501,11 @@ function CenterContent({
         </h1>
       </div>
 
-      <div className="mt-10 flex-1 overflow-y-auto px-12 pb-14">
+      <div ref={scrollRef} className="mt-10 flex-1 overflow-y-auto px-12 pb-14">
         <div className="max-w-[640px]">
           <BlocksRenderer blocks={article.body} mode={mode} onOpen={onOpen} />
 
+          <div ref={extrasRef}>
           <AnimatePresence initial={false}>
             {mode === "datos" && (
               <motion.div
@@ -443,6 +536,7 @@ function CenterContent({
               </motion.div>
             )}
           </AnimatePresence>
+          </div>
         </div>
       </div>
     </section>
@@ -633,6 +727,16 @@ function BlockItem({
   }
 }
 
+function downloadTableAsExcel(table: Extract<Block, { type: "table" }>, index: number) {
+  const ws = XLSX.utils.aoa_to_sheet([table.headers, ...table.rows])
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, "Tabla")
+  const filename = table.caption
+    ? `${table.caption.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ _-]/g, "").trim()}.xlsx`
+    : `tabla-${index + 1}.xlsx`
+  XLSX.writeFile(wb, filename)
+}
+
 function DataOverlay({ tables }: { tables: Extract<Block, { type: "table" }>[] }) {
   if (tables.length === 0) {
     return (
@@ -650,11 +754,25 @@ function DataOverlay({ tables }: { tables: Extract<Block, { type: "table" }>[] }
           key={i}
           className="rounded-[16px] border border-brand-ink/8 bg-[#FAFAFB] p-8 shadow-[0_1px_2px_rgba(34,24,74,0.03)]"
         >
-          {table.caption && (
-            <div className="mb-5 text-[11px] tracking-[0.16em] text-brand-ink/40 uppercase">
-              {table.caption}
-            </div>
-          )}
+          <div className="mb-5 flex items-center justify-between gap-4">
+            {table.caption ? (
+              <div className="text-[11px] tracking-[0.16em] text-brand-ink/40 uppercase">
+                {table.caption}
+              </div>
+            ) : (
+              <div />
+            )}
+            <button
+              onClick={() => downloadTableAsExcel(table, i)}
+              title="Descargar como Excel"
+              className="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] text-brand-ink/40 outline-none transition-colors duration-150 hover:bg-brand-ink/6 hover:text-brand-ink/70 focus-visible:ring-2 focus-visible:ring-brand-accent/30"
+            >
+              <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="currentColor">
+                <path d="M2 13h12v1.5H2V13zm5.25-2.25V3h1.5v7.75l2.97-2.97 1.06 1.06L8 13.62l-4.78-4.78 1.06-1.06 2.97 2.97z"/>
+              </svg>
+              Excel
+            </button>
+          </div>
           <table className="w-full border-collapse text-[14px]">
             <thead>
               <tr className="border-b border-brand-ink/10">
@@ -807,6 +925,15 @@ function RightPanel({
   onToggle: () => void
 }) {
   const path = useMemo(() => visits.map((v) => v.code), [visits])
+  const listRef = useRef<HTMLUListElement>(null)
+
+  useEffect(() => {
+    const list = listRef.current
+    if (!list) return
+    const active = list.querySelector<HTMLElement>('[data-focus="true"]')
+    if (!active) return
+    active.scrollIntoView({ block: "nearest", behavior: "smooth" })
+  }, [focus])
 
   if (!open) {
     return <CollapsedRail side="right" label="Índice de la consulta" onExpand={onToggle} />
@@ -817,23 +944,15 @@ function RightPanel({
       {/* Dynamic index — memory of consultation */}
       <div className="flex min-h-0 flex-1 flex-col border-b border-brand-ink/6">
         <div className="shrink-0 px-6 pt-8 pb-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
+          <div className="flex items-start gap-3">
+            <CollapseBtn side="right" onClick={onToggle} />
+            <div className="flex-1">
               <div className="text-[11px] tracking-[0.16em] text-brand-ink/35 uppercase">
                 Índice de la consulta
               </div>
               <div className="mt-1.5 text-[14px] text-brand-ink/75" style={{ fontWeight: 500 }}>
                 Tu recorrido
               </div>
-            </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={onHome}
-                className="rounded-md px-2 py-1 text-[12px] text-brand-ink/40 outline-none transition-colors duration-150 hover:bg-brand-ink/4 hover:text-brand-ink/75"
-              >
-                Nueva
-              </button>
-              <CollapseBtn side="right" onClick={onToggle} />
             </div>
           </div>
 
@@ -845,9 +964,10 @@ function RightPanel({
                   onClick={() => onSelect(code)}
                   className={`rounded px-1 py-0.5 text-[11px] outline-none transition-colors duration-150 ${
                     code === focus
-                      ? "bg-brand-accent/90 text-white"
+                      ? "text-white"
                       : "text-brand-ink/45 hover:bg-brand-ink/5 hover:text-brand-ink/75"
                   }`}
+                  style={code === focus ? { background: chapterColor(code, 0.85) } : undefined}
                 >
                   {code}
                 </button>
@@ -859,11 +979,12 @@ function RightPanel({
 
         {/* Visited nodes as a memory list — scrollable */}
         <ul
+          ref={listRef}
           className="min-h-0 flex-1 overflow-y-scroll px-6 pb-6 space-y-0.5"
           style={{ scrollbarGutter: "stable" }}
         >
           {visits.map((v) => (
-            <li key={v.code}>
+            <li key={v.code} data-focus={v.code === focus ? "true" : undefined}>
               <button
                 onClick={() => onSelect(v.code)}
                 className={`flex w-full items-baseline gap-3 rounded-md px-2 py-2 text-left outline-none transition-colors ${
@@ -873,12 +994,14 @@ function RightPanel({
                 }`}
               >
                 <span
-                  className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
-                    v.code === focus ? "bg-brand-accent" : "bg-brand-ink/20"
-                  }`}
+                  className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${v.code === focus ? "" : "bg-brand-ink/20"}`}
+                  style={v.code === focus ? { background: chapterColor(v.code, 1) } : undefined}
                   aria-hidden
                 />
-                <span className="w-14 shrink-0 text-[11px] tracking-wider text-brand-ink/40">
+                <span
+                  className={`w-14 shrink-0 text-[11px] tracking-wider ${v.code === focus ? "" : "text-brand-ink/40"}`}
+                  style={v.code === focus ? { color: chapterColor(v.code, 1) } : undefined}
+                >
                   {v.code}
                 </span>
                 <span className="flex-1 text-[12.5px] text-brand-ink/70">{v.title}</span>
@@ -897,7 +1020,20 @@ function RightPanel({
           <span className="text-[11px] text-brand-ink/35">p. 47</span>
         </div>
         <div className="flex min-h-0 flex-1 px-6 pt-3 pb-5">
-          <div className="w-full overflow-hidden rounded-md border border-brand-ink/8 bg-white p-5 text-[10px] leading-relaxed text-brand-ink/65 shadow-[0_1px_2px_rgba(34,24,74,0.04)]">
+          <div className="relative w-full overflow-hidden rounded-md border border-brand-ink/8 bg-white p-5 text-[10px] leading-relaxed text-brand-ink/65 shadow-[0_1px_2px_rgba(34,24,74,0.04)]">
+            {/* Watermark */}
+            <div
+              className="pointer-events-none absolute inset-0 flex items-center justify-center"
+              aria-hidden
+            >
+              <div
+                className="select-none text-center text-[44px] font-bold tracking-widest text-brand-ink/12 uppercase leading-tight"
+                style={{ transform: "rotate(-45deg)", whiteSpace: "nowrap" }}
+              >
+                <div>PDF ORIGINAL</div>
+                <div>POR IMPLEMENTAR</div>
+              </div>
+            </div>
             <div className="border-b border-brand-ink/10 pb-2 text-center text-[9px] tracking-[0.14em] text-brand-ink/45 uppercase">
               NSR-10 · Título A
             </div>

@@ -15,6 +15,7 @@ export default function App() {
   return (
     <Shell
       onHome={home}
+      onNew={screen === "result" ? home : undefined}
       mark={screen === "result"}
       ambient={screen === "welcome" ? "strong" : screen === "result" ? "none" : "soft"}
     >
