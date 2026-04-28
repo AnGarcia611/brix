@@ -337,7 +337,10 @@ function ChapterSection({
   currentCode: string
   onSelect: (code: string) => void
 }) {
-  const [expanded, setExpanded] = useState(true)
+  const containsActive = chapter.items.some(
+    (item) => currentCode === item.code || currentCode.startsWith(item.code + ".")
+  )
+  const [expanded, setExpanded] = useState(containsActive)
   return (
     <div className="mb-0.5">
       <button

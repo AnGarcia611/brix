@@ -1,13 +1,17 @@
 import { TITULO_B_CHAPTERS } from "./titulo-b/_chapters"
 import { B1 } from "./titulo-b/B.1"
 import { B2 } from "./titulo-b/B.2"
+import { B3 } from "./titulo-b/B.3"
+import { B4 } from "./titulo-b/B.4"
+import { B5 } from "./titulo-b/B.5"
+import { B6 } from "./titulo-b/B.6"
 import type { Article } from "./types"
 
 // ─── Árbol de navegación (LeftNav en ArticleView) ───────────────────────────
 export const TREE = [{ title: "Título B — Cargas", chapters: TITULO_B_CHAPTERS }]
 
 // ─── Lookup de artículos por código ─────────────────────────────────────────
-const ALL_ARTICLES: Article[] = [...B1, ...B2]
+const ALL_ARTICLES: Article[] = [...B1, ...B2, ...B3, ...B4, ...B5, ...B6]
 
 export const ARTICLES: Record<string, Article> = Object.fromEntries(
   ALL_ARTICLES.map((a) => [a.code, a])
