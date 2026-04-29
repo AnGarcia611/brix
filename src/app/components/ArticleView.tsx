@@ -1166,13 +1166,7 @@ const ALL_PAGES = Array.from(new Set(Object.values(PAGE_MAP))).sort((a, b) => {
   return n(a) - n(b)
 })
 
-function PageModal({
-  initialFile,
-  onClose,
-}: {
-  initialFile: string
-  onClose: () => void
-}) {
+function PageModal({ initialFile, onClose }: { initialFile: string; onClose: () => void }) {
   const [current, setCurrent] = useState(initialFile)
   const idx = ALL_PAGES.indexOf(current)
 
@@ -1247,8 +1241,7 @@ function OriginalPageViewer({ focus }: { focus: string }) {
   const [loaded, setLoaded] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const filename =
-    PAGE_MAP[focus] ??
-    Object.entries(PAGE_MAP).find(([code]) => code.startsWith(focus + "."))?.[1]
+    PAGE_MAP[focus] ?? Object.entries(PAGE_MAP).find(([code]) => code.startsWith(focus + "."))?.[1]
 
   useEffect(() => {
     setLoaded(false)
@@ -1271,7 +1264,10 @@ function OriginalPageViewer({ focus }: { focus: string }) {
         <div className="group relative w-[70%]">
           {/* Skeleton */}
           {!loaded && (
-            <div className="w-full rounded-md border border-brand-ink/8 bg-brand-ink/5 shadow-[0_1px_2px_rgba(34,24,74,0.04)] animate-pulse" style={{ aspectRatio: "8.5/11" }} />
+            <div
+              className="w-full rounded-md border border-brand-ink/8 bg-brand-ink/5 shadow-[0_1px_2px_rgba(34,24,74,0.04)] animate-pulse"
+              style={{ aspectRatio: "8.5/11" }}
+            />
           )}
           <img
             key={focus}
@@ -1279,7 +1275,12 @@ function OriginalPageViewer({ focus }: { focus: string }) {
             alt={`Página del documento original — ${focus}`}
             onLoad={() => setLoaded(true)}
             className="w-full rounded-md border border-brand-ink/8 shadow-[0_1px_2px_rgba(34,24,74,0.04)] transition-opacity duration-500"
-            style={{ opacity: loaded ? 1 : 0, position: loaded ? "static" : "absolute", top: 0, left: 0 }}
+            style={{
+              opacity: loaded ? 1 : 0,
+              position: loaded ? "static" : "absolute",
+              top: 0,
+              left: 0,
+            }}
           />
           {/* Ghost button */}
           {loaded && (
