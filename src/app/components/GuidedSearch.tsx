@@ -1,78 +1,78 @@
 import { motion, AnimatePresence } from "motion/react"
 import { useState } from "react"
 
-type Question = {
-  title: string
-  options: { value: string; label: string; description: string }[]
+type LoadType = "muerta" | "viva" | "viento" | "combinaciones"
+
+type Option = { label: string; description: string }
+type LeafOption = Option & { code: string }
+
+const STEP1: { title: string; options: (Option & { value: LoadType })[] } = {
+  title: "¿Qué tipo de carga está consultando?",
+  options: [
+    { value: "muerta", label: "Carga muerta", description: "Peso propio y elementos permanentes" },
+    { value: "viva", label: "Carga viva", description: "Ocupación y uso de la edificación" },
+    { value: "viento", label: "Viento", description: "Presión y succión sobre la estructura" },
+    { value: "combinaciones", label: "Combinaciones", description: "Métodos ASD y LRFD" },
+  ],
 }
 
-const STEPS: Question[] = [
-  {
-    title: "¿Qué tipo de edificación?",
+const STEP2: Record<LoadType, { title: string; options: LeafOption[] }> = {
+  muerta: {
+    title: "¿Qué aspecto de carga muerta?",
     options: [
-      { value: "vivienda", label: "Vivienda", description: "Uni o multifamiliar" },
-      { value: "comercial", label: "Comercial", description: "Oficinas, retail" },
-      { value: "institucional", label: "Institucional", description: "Grupo III o IV" },
-      { value: "industrial", label: "Industrial", description: "Bodegas, plantas" },
+      { code: "B.3.2", label: "Masas y pesos de materiales", description: "Densidades y pesos unitarios de materiales" },
+      { code: "B.3.3", label: "Cargas muertas mínimas", description: "Valores mínimos por tipo de cubierta y piso" },
+      { code: "B.3.4", label: "Elementos no estructurales", description: "Muros divisorios, fachadas, instalaciones" },
     ],
   },
-  {
-    title: "¿Sistema estructural?",
+  viva: {
+    title: "¿Qué aspecto de carga viva?",
     options: [
-      { value: "concreto", label: "Concreto reforzado", description: "Título C" },
-      { value: "acero", label: "Acero estructural", description: "Título F" },
-      { value: "mamposteria", label: "Mampostería", description: "Título D" },
-      { value: "madera", label: "Madera o guadua", description: "Título G" },
+      { code: "B.4.2", label: "Cargas vivas uniformes", description: "Tabla de valores por tipo de ocupación" },
+      { code: "B.4.3", label: "Carga parcial", description: "Aplicación en una parte del área tributaria" },
+      { code: "B.4.4", label: "Impacto", description: "Incremento por maquinaria o equipos móviles" },
+      { code: "B.4.5", label: "Reducción de la carga viva", description: "Condiciones para reducir en áreas grandes" },
     ],
   },
-  {
-    title: "¿Qué necesitas consultar?",
+  viento: {
+    title: "¿Qué aspecto de viento?",
     options: [
-      { value: "sismo", label: "Requisitos sísmicos", description: "Amenaza y diseño" },
-      { value: "cargas", label: "Cargas y combinaciones", description: "Título B" },
-      { value: "deriva", label: "Deriva y desplazamientos", description: "Capítulo A.6" },
-      { value: "materiales", label: "Materiales y calidad", description: "Ensayos" },
+      { code: "B.6.1.1", label: "Procedimientos permitidos", description: "Métodos aceptados para el cálculo de viento" },
+      { code: "B.6.1.3", label: "Carga de viento mínima", description: "Presión mínima de diseño para estructuras" },
+      { code: "B.6.4", label: "Procedimiento simplificado — Método 1", description: "Para edificios cerrados de poca altura" },
+      { code: "B.6.5", label: "Método 2 — Procedimiento analítico", description: "Para edificios de cualquier altura y forma" },
     ],
   },
-  {
-    title: "¿Zona de amenaza sísmica?",
+  combinaciones: {
+    title: "¿Qué aspecto de combinaciones?",
     options: [
-      { value: "baja", label: "Baja", description: "Aa ≤ 0,10" },
-      { value: "intermedia", label: "Intermedia", description: "0,10 < Aa ≤ 0,20" },
-      { value: "alta", label: "Alta", description: "Aa > 0,20" },
-      { value: "ns", label: "No estoy seguro", description: "Consultar mapa" },
+      { code: "B.2.1.1", label: "Definiciones", description: "Términos clave del sistema de cargas NSR-10" },
+      { code: "B.2.2", label: "Nomenclatura", description: "Símbolos y notación usados en combinaciones" },
+      { code: "B.2.3", label: "Método ASD", description: "Esfuerzos de trabajo — cargas sin mayorar" },
+      { code: "B.2.4", label: "Método LRFD", description: "Resistencia — cargas mayoradas por factores" },
     ],
   },
-  {
-    title: "¿Nivel de detalle?",
-    options: [
-      { value: "resumen", label: "Resumen", description: "Vista general" },
-      { value: "articulo", label: "Artículo completo", description: "Texto oficial" },
-      { value: "tablas", label: "Tablas y valores", description: "Datos técnicos" },
-      { value: "todo", label: "Todo", description: "Consulta completa" },
-    ],
-  },
-]
+}
 
-export function GuidedSearch({ onBack, onResult }: { onBack: () => void; onResult: () => void }) {
+export function GuidedSearch({ onBack, onResult }: { onBack: () => void; onResult: (code: string) => void }) {
   const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState<string[]>([])
+  const [loadType, setLoadType] = useState<LoadType | null>(null)
 
-  const q = STEPS[step]
+  const currentStep = step === 0 ? STEP1 : STEP2[loadType!]
+  const totalSteps = 2
 
-  const select = (v: string) => {
-    const next = [...answers]
-    next[step] = v
-    setAnswers(next)
-    setTimeout(() => {
-      if (step + 1 >= STEPS.length) onResult()
-      else setStep(step + 1)
-    }, 240)
+  const selectStep1 = (v: LoadType) => {
+    setLoadType(v)
+    setTimeout(() => setStep(1), 240)
+  }
+
+  const selectStep2 = (code: string) => {
+    setTimeout(() => onResult(code), 180)
   }
 
   const back = () => {
     if (step === 0) onBack()
-    else setStep(step - 1)
+    else setStep(0)
   }
 
   return (
@@ -85,7 +85,7 @@ export function GuidedSearch({ onBack, onResult }: { onBack: () => void; onResul
           ← Atrás
         </button>
         <span className="text-[13px] tracking-wider text-brand-ink/45">
-          {step + 1} / {STEPS.length}
+          {step + 1} / {totalSteps}
         </span>
       </div>
 
@@ -98,7 +98,7 @@ export function GuidedSearch({ onBack, onResult }: { onBack: () => void; onResul
                 "linear-gradient(90deg, var(--color-brand-accent) 0%, var(--color-brand-violet) 55%, var(--color-brand-cyan) 100%)",
             }}
             initial={false}
-            animate={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
+            animate={{ width: `${((step + 1) / totalSteps) * 100}%` }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           />
         </div>
@@ -122,56 +122,47 @@ export function GuidedSearch({ onBack, onResult }: { onBack: () => void; onResul
             }}
             className="text-brand-ink"
           >
-            {q.title}
+            {currentStep.title}
           </h1>
 
           <div className="mt-10 grid gap-3 md:grid-cols-2">
-            {q.options.map((opt, i) => {
-              const selected = answers[step] === opt.value
-              return (
-                <motion.button
-                  key={opt.value}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.06 + i * 0.04 }}
-                  onClick={() => select(opt.value)}
-                  className={`group relative flex items-center justify-between rounded-[16px] border bg-white px-6 py-5 text-left outline-none transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 focus-visible:ring-4 focus-visible:ring-brand-accent/20 ${
-                    selected
-                      ? "border-brand-green bg-brand-green/4 shadow-[0_8px_24px_-12px_rgba(13,231,122,0.35)]"
-                      : "border-brand-ink/10 hover:border-brand-ink/25 hover:shadow-[0_2px_4px_rgba(34,24,74,0.04),0_16px_36px_-20px_rgba(34,24,74,0.15)]"
-                  }`}
-                >
-                  <div>
-                    <div className="text-[17px] text-brand-ink" style={{ fontWeight: 500 }}>
-                      {opt.label}
-                    </div>
-                    <div className="mt-1 text-sm text-brand-ink/50">{opt.description}</div>
-                  </div>
-                  <div
-                    className={`flex h-5 w-5 items-center justify-center rounded-full border transition-all duration-200 ${
-                      selected
-                        ? "border-brand-green bg-brand-green"
-                        : "border-brand-ink/20 group-hover:border-brand-accent/40"
-                    }`}
-                    aria-hidden
+            {step === 0
+              ? STEP1.options.map((opt, i) => (
+                  <motion.button
+                    key={opt.value}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.06 + i * 0.04 }}
+                    onClick={() => selectStep1(opt.value)}
+                    className="group relative flex items-center justify-between rounded-[16px] border border-brand-ink/10 bg-white px-6 py-5 text-left outline-none transition-[transform,box-shadow,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-brand-ink/25 hover:shadow-[0_2px_4px_rgba(34,24,74,0.04),0_16px_36px_-20px_rgba(34,24,74,0.15)] focus-visible:ring-4 focus-visible:ring-brand-accent/20"
                   >
-                    {selected && (
-                      <svg
-                        viewBox="0 0 10 10"
-                        className="h-2.5 w-2.5 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M2 5.2 4.2 7.4 8.2 2.6" />
-                      </svg>
-                    )}
-                  </div>
-                </motion.button>
-              )
-            })}
+                    <div>
+                      <div className="text-[17px] text-brand-ink" style={{ fontWeight: 500 }}>
+                        {opt.label}
+                      </div>
+                      <div className="mt-1 text-sm text-brand-ink/50">{opt.description}</div>
+                    </div>
+                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-brand-ink/20 transition-all duration-200 group-hover:border-brand-accent/40" aria-hidden />
+                  </motion.button>
+                ))
+              : STEP2[loadType!].options.map((opt, i) => (
+                  <motion.button
+                    key={opt.code}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.06 + i * 0.04 }}
+                    onClick={() => selectStep2(opt.code)}
+                    className="group relative flex items-center justify-between rounded-[16px] border border-brand-ink/10 bg-white px-6 py-5 text-left outline-none transition-[transform,box-shadow,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-brand-ink/25 hover:shadow-[0_2px_4px_rgba(34,24,74,0.04),0_16px_36px_-20px_rgba(34,24,74,0.15)] focus-visible:ring-4 focus-visible:ring-brand-accent/20"
+                  >
+                    <div>
+                      <div className="text-[17px] text-brand-ink" style={{ fontWeight: 500 }}>
+                        {opt.label}
+                      </div>
+                      <div className="mt-1 text-sm text-brand-ink/50">{opt.description}</div>
+                    </div>
+                    <div className="shrink-0 text-[12px] text-brand-ink/30">{opt.code}</div>
+                  </motion.button>
+                ))}
           </div>
         </motion.div>
       </AnimatePresence>

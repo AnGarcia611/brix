@@ -42,7 +42,7 @@ export default function App() {
             />
           )}
           {screen === "guided" && (
-            <GuidedSearch onBack={home} onResult={() => setScreen("result")} />
+            <GuidedSearch onBack={home} onResult={(code) => { setSelectedCode(code); setScreen("result") }} />
           )}
           {screen === "result" && (
             <ArticleView onHome={home} onRestart={home} initialCode={selectedCode} />
