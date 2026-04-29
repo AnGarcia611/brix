@@ -19,7 +19,7 @@ export function Welcome({ onPick }: { onPick: (mode: "direct" | "guided") => voi
             }}
             className="mt-4 text-brand-ink"
           >
-            NSR-10
+            NSR-10 <em style={{ fontWeight: 300, fontStyle: "italic" }}>Titulo B</em>
           </h1>
 
           <p
