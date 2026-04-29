@@ -1,73 +1,73 @@
-import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
-import { ARTICLES, TREE } from "../../data";
+import { motion, AnimatePresence } from "motion/react"
+import { useState } from "react"
+import { ARTICLES, TREE } from "../../data"
 
-const LS_KEY = "brix:recent-codes";
-const MAX_RECENTS = 3;
+const LS_KEY = "brix:recent-codes"
+const MAX_RECENTS = 3
 
 function loadRecents(): string[] {
   try {
-    const raw = localStorage.getItem(LS_KEY);
-    return raw ? (JSON.parse(raw) as string[]) : [];
+    const raw = localStorage.getItem(LS_KEY)
+    return raw ? (JSON.parse(raw) as string[]) : []
   } catch {
-    return [];
+    return []
   }
 }
 
 function saveRecents(codes: string[]): void {
   try {
-    localStorage.setItem(LS_KEY, JSON.stringify(codes));
+    localStorage.setItem(LS_KEY, JSON.stringify(codes))
   } catch {
     // storage not available — silent fail
   }
 }
 
 function addRecent(code: string): string[] {
-  const prev = loadRecents().filter((c) => c !== code);
-  const next = [code, ...prev].slice(0, MAX_RECENTS);
-  saveRecents(next);
-  return next;
+  const prev = loadRecents().filter((c) => c !== code)
+  const next = [code, ...prev].slice(0, MAX_RECENTS)
+  saveRecents(next)
+  return next
 }
 
 function sortByCode(a: { code: string }, b: { code: string }): number {
-  const aParts = a.code.split(".").map((p) => (isNaN(Number(p)) ? p : Number(p)));
-  const bParts = b.code.split(".").map((p) => (isNaN(Number(p)) ? p : Number(p)));
+  const aParts = a.code.split(".").map((p) => (isNaN(Number(p)) ? p : Number(p)))
+  const bParts = b.code.split(".").map((p) => (isNaN(Number(p)) ? p : Number(p)))
   for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
-    if (aParts[i] === undefined) return -1;
-    if (bParts[i] === undefined) return 1;
-    if (aParts[i]! < bParts[i]!) return -1;
-    if (aParts[i]! > bParts[i]!) return 1;
+    if (aParts[i] === undefined) return -1
+    if (bParts[i] === undefined) return 1
+    if (aParts[i]! < bParts[i]!) return -1
+    if (aParts[i]! > bParts[i]!) return 1
   }
-  return 0;
+  return 0
 }
 
-const ALL_ARTICLES = Object.values(ARTICLES).sort(sortByCode);
-const CHAPTERS = TREE[0]!.chapters;
+const ALL_ARTICLES = Object.values(ARTICLES).sort(sortByCode)
+const CHAPTERS = TREE[0]!.chapters
 
 export function DirectSearch({
   onResult,
 }: {
-  onBack: () => void;
-  onResult: (code: string) => void;
+  onBack: () => void
+  onResult: (code: string) => void
 }) {
-  const [query, setQuery] = useState("");
-  const [recents, setRecents] = useState<string[]>(() => loadRecents());
+  const [query, setQuery] = useState("")
+  const [recents, setRecents] = useState<string[]>(() => loadRecents())
 
   const navigate = (code: string) => {
-    setRecents(addRecent(code));
-    onResult(code);
-  };
+    setRecents(addRecent(code))
+    onResult(code)
+  }
 
   const filtered = query
     ? ALL_ARTICLES.filter((a) => {
-        const q = query.toLowerCase();
+        const q = query.toLowerCase()
         return (
           a.title.toLowerCase().includes(q) ||
           a.summary.toLowerCase().includes(q) ||
           a.code.toLowerCase().includes(q)
-        );
+        )
       })
-    : [];
+    : []
 
   return (
     <div className="mx-auto flex min-h-[calc(100vh-88px)] max-w-[720px] flex-col px-10 pt-20">
@@ -83,8 +83,8 @@ export function DirectSearch({
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              const first = filtered[0] ?? ALL_ARTICLES[0];
-              if (first) navigate(first.code);
+              const first = filtered[0] ?? ALL_ARTICLES[0]
+              if (first) navigate(first.code)
             }
           }}
           placeholder="Buscar en NSR-10"
@@ -120,23 +120,21 @@ export function DirectSearch({
             ) : (
               <ul className="mt-4 space-y-1">
                 {recents.map((code) => {
-                  const article = ARTICLES[code];
-                  if (!article) return null;
+                  const article = ARTICLES[code]
+                  if (!article) return null
                   return (
                     <li key={code}>
                       <button
                         onClick={() => navigate(code)}
                         className="group flex w-full items-baseline gap-3 rounded-lg py-3 text-left outline-none"
                       >
-                        <span className="shrink-0 text-[13px] text-brand-ink/35">
-                          {code}
-                        </span>
+                        <span className="shrink-0 text-[13px] text-brand-ink/35">{code}</span>
                         <span className="text-[17px] text-brand-ink/75 transition-colors group-hover:text-brand-ink">
                           {article.title}
                         </span>
                       </button>
                     </li>
-                  );
+                  )
                 })}
               </ul>
             )}
@@ -145,8 +143,8 @@ export function DirectSearch({
               <SectionLabel>Sugerencias</SectionLabel>
               <ul className="mt-4 space-y-1">
                 {CHAPTERS.map((chapter) => {
-                  const chapterCode = chapter.title.split(" — ")[0]!;
-                  const chapterLabel = chapter.title.split(" — ")[1] ?? chapter.title;
+                  const chapterCode = chapter.title.split(" — ")[0]!
+                  const chapterLabel = chapter.title.split(" — ")[1] ?? chapter.title
                   return (
                     <li key={chapter.title}>
                       <button
@@ -161,7 +159,7 @@ export function DirectSearch({
                         </span>
                       </button>
                     </li>
-                  );
+                  )
                 })}
               </ul>
             </div>
@@ -179,7 +177,7 @@ export function DirectSearch({
               {filtered.length} {filtered.length === 1 ? "resultado" : "resultados"}
             </SectionLabel>
             <ul className="mt-4 divide-y divide-brand-ink/8">
-              {(filtered.length ? filtered : ALL_ARTICLES.slice(0, 6)).map((a, i) => (
+              {filtered.map((a, i) => (
                 <motion.li
                   key={a.code}
                   initial={{ opacity: 0, y: 4 }}
@@ -204,13 +202,9 @@ export function DirectSearch({
         )}
       </AnimatePresence>
     </div>
-  );
+  )
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="text-[11px] tracking-[0.14em] text-brand-ink/40 uppercase">
-      {children}
-    </div>
-  );
+  return <div className="text-[11px] tracking-[0.14em] text-brand-ink/40 uppercase">{children}</div>
 }

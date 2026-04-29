@@ -44,7 +44,9 @@ export default function App() {
           {screen === "guided" && (
             <GuidedSearch onBack={home} onResult={() => setScreen("result")} />
           )}
-          {screen === "result" && <ArticleView onHome={home} onRestart={home} initialCode={selectedCode} />}
+          {screen === "result" && (
+            <ArticleView onHome={home} onRestart={home} initialCode={selectedCode} />
+          )}
         </motion.div>
       </AnimatePresence>
     </Shell>

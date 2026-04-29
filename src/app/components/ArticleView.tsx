@@ -35,8 +35,15 @@ function chapterColor(code: string, alpha = 1): string {
 
 const FIRST_CODE = Object.keys(ARTICLES)[0] ?? "B.1.1"
 
-export function ArticleView({ onHome, initialCode }: { onHome: () => void; onRestart: () => void; initialCode?: string }) {
-  const startCode = (initialCode && ARTICLES[initialCode]) ? initialCode : FIRST_CODE
+export function ArticleView({
+  onHome,
+  initialCode,
+}: {
+  onHome: () => void
+  onRestart: () => void
+  initialCode?: string
+}) {
+  const startCode = initialCode && ARTICLES[initialCode] ? initialCode : FIRST_CODE
   const [currentCode, setCurrentCode] = useState<string>(startCode)
   const [mode, setMode] = useState<Mode>("lectura")
   const [stack, setStack] = useState<string[]>([])
@@ -519,11 +526,7 @@ function CenterContent({
     for (let i = 2; i < parts.length; i++) {
       intermediate.push(parts.slice(0, i + 1).join("."))
     }
-    breadcrumbs = [
-      `Título ${parts[0]}`,
-      `Capítulo ${parts[0]}.${parts[1]}`,
-      ...intermediate,
-    ]
+    breadcrumbs = [`Título ${parts[0]}`, `Capítulo ${parts[0]}.${parts[1]}`, ...intermediate]
   }
 
   const tables = extractTables(article.body)
