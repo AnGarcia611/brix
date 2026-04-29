@@ -516,17 +516,17 @@ function CenterContent({
   let breadcrumbs: string[]
   if (parts.length === 1) {
     // "B"
-    breadcrumbs = [`Título ${parts[0]}`]
+    breadcrumbs = [parts[0]]
   } else if (parts.length === 2) {
     // "B.1"
-    breadcrumbs = [`Título ${parts[0]}`, `Capítulo ${parts[0]}.${parts[1]}`]
+    breadcrumbs = [parts[0], `${parts[0]}.${parts[1]}`]
   } else {
     // "B.1.2", "B.1.2.1", "B.1.2.1.3", etc. — build every intermediate crumb
     const intermediate: string[] = []
     for (let i = 2; i < parts.length; i++) {
       intermediate.push(parts.slice(0, i + 1).join("."))
     }
-    breadcrumbs = [`Título ${parts[0]}`, `Capítulo ${parts[0]}.${parts[1]}`, ...intermediate]
+    breadcrumbs = [parts[0], `${parts[0]}.${parts[1]}`, ...intermediate]
   }
 
   const tables = extractTables(article.body)
