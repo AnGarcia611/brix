@@ -8,6 +8,155 @@ import type { Block, Article as ArticleData, TreeChapter, TreeItem } from "../..
 type Mode = "lectura" | "datos" | "relacion"
 type Visit = { code: string; title: string; at: number }
 
+// Mapeo artículo → imagen de página del documento original
+const PAGE_MAP: Record<string, string> = {
+  "B.1.1": "B-7.png",
+  "B.1.2": "B-7.png",
+  "B.1.2.1.1": "B-7.png",
+  "B.1.2.1.2": "B-7.png",
+  "B.1.2.1.3": "B-7.png",
+  "B.1.2.1.4": "B-7.png",
+  "B.1.3": "B-7.png",
+  "B.1.4": "B-8.png",
+  "B.2.1": "B-9.png",
+  "B.2.1.1": "B-9.png",
+  "B.2.1.2": "B-10.png",
+  "B.2.2": "B-10.png",
+  "B.2.3": "B-11.png",
+  "B.2.3.1": "B-11.png",
+  "B.2.3.2": "B-12.png",
+  "B.2.3.2.1": "B-12.png",
+  "B.2.3.2.2": "B-12.png",
+  "B.2.4": "B-12.png",
+  "B.2.4.1": "B-12.png",
+  "B.2.4.2": "B-12.png",
+  "B.3.1": "B-15.png",
+  "B.3.2": "B-15.png",
+  "B.3.3": "B-16.png",
+  "B.3.4": "B-16.png",
+  "B.3.4.1": "B-16.png",
+  "B.3.4.2": "B-18.png",
+  "B.3.4.3": "B-20.png",
+  "B.3.5": "B-20.png",
+  "B.3.6": "B-20.png",
+  "B.4.1": "B-21.png",
+  "B.4.2": "B-21.png",
+  "B.4.2.1": "B-21.png",
+  "B.4.2.2": "B-22.png",
+  "B.4.3": "B-22.png",
+  "B.4.4": "B-22.png",
+  "B.4.5": "B-23.png",
+  "B.4.5.1": "B-23.png",
+  "B.4.5.2": "B-23.png",
+  "B.4.6": "B-23.png",
+  "B.4.7": "B-24.png",
+  "B.4.8": "B-24.png",
+  "B.4.8-1": "B-24.png",
+  "B.4.8-2": "B-24.png",
+  "B.4.8-3": "B-24.png",
+  "B.5.1": "B-25.png",
+  "B.5.2": "B-25.png",
+  "B.5.3": "B-25.png",
+  "B.5.4": "B-25.png",
+  "B.6.1": "B-27.png",
+  "B.6.1.1": "B-27.png",
+  "B.6.1.2": "B-27.png",
+  "B.6.1.3": "B-27.png",
+  "B.6.1.3.1": "B-27.png",
+  "B.6.1.3.2": "B-27.png",
+  "B.6.2": "B-27.png",
+  "B.6.3": "B-29.png",
+  "B.6.4": "B-31.png",
+  "B.6.4.1": "B-31.png",
+  "B.6.4.1.1": "B-31.png",
+  "B.6.4.1.2": "B-32.png",
+  "B.6.4.2": "B-32.png",
+  "B.6.4.2.1": "B-32.png",
+  "B.6.4.2.1.1": "B-32.png",
+  "B.6.4.2.2": "B-32.png",
+  "B.6.4.2.2.1": "B-33.png",
+  "B.6.4.3": "B-33.png",
+  "B.6.5": "B-33.png",
+  "B.6.5.1": "B-33.png",
+  "B.6.5.2": "B-33.png",
+  "B.6.5.2.1": "B-33.png",
+  "B.6.5.2.2": "B-33.png",
+  "B.6.5.3": "B-33.png",
+  "B.6.5.4": "B-33.png",
+  "B.6.5.4.1": "B-33.png",
+  "B.6.5.4.2": "B-34.png",
+  "B.6.5.4.3": "B-34.png",
+  "B.6.5.4.4": "B-34.png",
+  "B.6.5.5": "B-34.png",
+  "B.6.5.6": "B-34.png",
+  "B.6.5.6.1": "B-34.png",
+  "B.6.5.6.2": "B-34.png",
+  "B.6.5.6.3": "B-34.png",
+  "B.6.5.6.4": "B-35.png",
+  "B.6.5.6.4.1": "B-35.png",
+  "B.6.5.6.4.2": "B-35.png",
+  "B.6.5.6.5": "B-35.png",
+  "B.6.5.6.6": "B-35.png",
+  "B.6.5.7": "B-35.png",
+  "B.6.5.7.1": "B-35.png",
+  "B.6.5.7.2": "B-36.png",
+  "B.6.5.8": "B-36.png",
+  "B.6.5.8.1": "B-36.png",
+  "B.6.5.8.2": "B-36.png",
+  "B.6.5.8.3": "B-37.png",
+  "B.6.5.8.4": "B-37.png",
+  "B.6.5.9": "B-37.png",
+  "B.6.5.9.1": "B-37.png",
+  "B.6.5.9.2": "B-37.png",
+  "B.6.5.9.3": "B-37.png",
+  "B.6.5.9.4": "B-38.png",
+  "B.6.5.10": "B-38.png",
+  "B.6.5.11": "B-38.png",
+  "B.6.5.11.1": "B-38.png",
+  "B.6.5.11.1.1": "B-38.png",
+  "B.6.5.11.2": "B-38.png",
+  "B.6.5.11.2.1": "B-38.png",
+  "B.6.5.11.2.2": "B-38.png",
+  "B.6.5.11.3": "B-39.png",
+  "B.6.5.11.4": "B-39.png",
+  "B.6.5.11.4.1": "B-39.png",
+  "B.6.5.11.4.2": "B-39.png",
+  "B.6.5.11.5": "B-39.png",
+  "B.6.5.11.5.1": "B-39.png",
+  "B.6.5.11.5.2": "B-39.png",
+  "B.6.5.12": "B-39.png",
+  "B.6.5.12.1": "B-39.png",
+  "B.6.5.12.1.1": "B-39.png",
+  "B.6.5.12.1.2": "B-39.png",
+  "B.6.5.12.1.3": "B-39.png",
+  "B.6.5.12.2": "B-39.png",
+  "B.6.5.12.2.1": "B-39.png",
+  "B.6.5.12.2.2": "B-40.png",
+  "B.6.5.12.2.3": "B-40.png",
+  "B.6.5.12.2.4": "B-40.png",
+  "B.6.5.12.3": "B-40.png",
+  "B.6.5.12.4": "B-41.png",
+  "B.6.5.12.4.1": "B-41.png",
+  "B.6.5.12.4.2": "B-41.png",
+  "B.6.5.12.4.3": "B-42.png",
+  "B.6.5.12.4.4": "B-42.png",
+  "B.6.5.13": "B-42.png",
+  "B.6.5.13.1": "B-42.png",
+  "B.6.5.13.1.1": "B-42.png",
+  "B.6.5.13.1.2": "B-42.png",
+  "B.6.5.13.2": "B-42.png",
+  "B.6.5.13.3": "B-43.png",
+  "B.6.5.14": "B-43.png",
+  "B.6.5.15": "B-43.png",
+  "B.6.5.15.1": "B-43.png",
+  "B.6.6": "B-43.png",
+  "B.6.6.1": "B-43.png",
+  "B.6.6.2": "B-44.png",
+  "B.6.6.3": "B-44.png",
+  "B.6.6.4": "B-44.png",
+  "B.6.6.4.1": "B-44.png",
+}
+
 // Colors per chapter index (cycling), using brand palette from theme.css
 const CHAPTER_COLORS = [
   "#0DE77A", // green   — capítulo 1
@@ -1009,6 +1158,145 @@ function RelationOverlay({
   )
 }
 
+/* ---------- Original page viewer with skeleton ---------- */
+
+// Sorted unique pages from PAGE_MAP for modal navigation
+const ALL_PAGES = Array.from(new Set(Object.values(PAGE_MAP))).sort((a, b) => {
+  const n = (s: string) => parseInt(s.replace("B-", "").replace(".png", ""), 10)
+  return n(a) - n(b)
+})
+
+function PageModal({
+  initialFile,
+  onClose,
+}: {
+  initialFile: string
+  onClose: () => void
+}) {
+  const [current, setCurrent] = useState(initialFile)
+  const idx = ALL_PAGES.indexOf(current)
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+      if (e.key === "ArrowRight" && idx < ALL_PAGES.length - 1) setCurrent(ALL_PAGES[idx + 1]!)
+      if (e.key === "ArrowLeft" && idx > 0) setCurrent(ALL_PAGES[idx - 1]!)
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [idx, onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="relative flex max-h-[90vh] w-full max-w-2xl flex-col rounded-xl bg-white shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex shrink-0 items-center justify-between px-5 py-3 border-b border-brand-ink/8">
+          <span className="text-[11px] tracking-[0.16em] text-brand-ink/40 uppercase">
+            Documento original · {current.replace(".png", "").replace("B-", "p. ")}
+          </span>
+          <button
+            onClick={onClose}
+            className="rounded-md px-2 py-1 text-[11px] text-brand-ink/40 hover:bg-brand-ink/5 hover:text-brand-ink/70 transition-colors"
+          >
+            Cerrar
+          </button>
+        </div>
+
+        {/* Image */}
+        <div className="min-h-0 flex-1 overflow-y-auto flex items-start justify-center p-4">
+          <img
+            key={current}
+            src={`/pages/titulo-b/${current}`}
+            alt={`Página ${current}`}
+            className="w-full rounded-md"
+          />
+        </div>
+
+        {/* Footer nav */}
+        <div className="flex shrink-0 items-center justify-between px-5 py-3 border-t border-brand-ink/8">
+          <button
+            onClick={() => idx > 0 && setCurrent(ALL_PAGES[idx - 1]!)}
+            disabled={idx === 0}
+            className="rounded-md px-3 py-1.5 text-[12px] text-brand-ink/60 hover:bg-brand-ink/6 hover:text-brand-ink/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            ← Anterior
+          </button>
+          <span className="text-[11px] text-brand-ink/35">
+            {idx + 1} / {ALL_PAGES.length}
+          </span>
+          <button
+            onClick={() => idx < ALL_PAGES.length - 1 && setCurrent(ALL_PAGES[idx + 1]!)}
+            disabled={idx === ALL_PAGES.length - 1}
+            className="rounded-md px-3 py-1.5 text-[12px] text-brand-ink/60 hover:bg-brand-ink/6 hover:text-brand-ink/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            Siguiente →
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function OriginalPageViewer({ focus }: { focus: string }) {
+  const [loaded, setLoaded] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
+  const filename =
+    PAGE_MAP[focus] ??
+    Object.entries(PAGE_MAP).find(([code]) => code.startsWith(focus + "."))?.[1]
+
+  useEffect(() => {
+    setLoaded(false)
+  }, [focus])
+
+  if (!filename) return null
+
+  return (
+    <div className="flex shrink-0 flex-col">
+      <div className="flex items-baseline justify-between px-6 pt-5">
+        <div className="text-[11px] tracking-[0.16em] text-brand-ink/35 uppercase">
+          Documento original
+        </div>
+        <span className="text-[11px] text-brand-ink/35">
+          {filename.replace(".png", "").replace("B-", "p. ")}
+        </span>
+      </div>
+      <div className="relative flex justify-center px-6 pt-3 pb-5">
+        {/* Image wrapper with hover group */}
+        <div className="group relative w-[70%]">
+          {/* Skeleton */}
+          {!loaded && (
+            <div className="w-full rounded-md border border-brand-ink/8 bg-brand-ink/5 shadow-[0_1px_2px_rgba(34,24,74,0.04)] animate-pulse" style={{ aspectRatio: "8.5/11" }} />
+          )}
+          <img
+            key={focus}
+            src={`/pages/titulo-b/${filename}`}
+            alt={`Página del documento original — ${focus}`}
+            onLoad={() => setLoaded(true)}
+            className="w-full rounded-md border border-brand-ink/8 shadow-[0_1px_2px_rgba(34,24,74,0.04)] transition-opacity duration-500"
+            style={{ opacity: loaded ? 1 : 0, position: loaded ? "static" : "absolute", top: 0, left: 0 }}
+          />
+          {/* Ghost button */}
+          {loaded && (
+            <button
+              onClick={() => setModalOpen(true)}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex h-8 w-28 items-center justify-center rounded-full border border-brand-ink/20 bg-white/80 text-[11px] tracking-wide text-brand-ink/60 backdrop-blur-sm shadow-sm transition-colors hover:bg-white hover:text-brand-ink/80"
+            >
+              Ver página
+            </button>
+          )}
+        </div>
+      </div>
+      {modalOpen && <PageModal initialFile={filename} onClose={() => setModalOpen(false)} />}
+    </div>
+  )
+}
+
 /* ---------- RIGHT: Dynamic Index / Memory + PDF ---------- */
 
 function RightPanel({
@@ -1042,7 +1330,7 @@ function RightPanel({
   }
 
   return (
-    <aside className="flex flex-col overflow-hidden border-l border-brand-ink/6 bg-[#FBFBFC] text-brand-ink/75">
+    <aside className="flex flex-col h-full overflow-hidden border-l border-brand-ink/6 bg-[#FBFBFC] text-brand-ink/75">
       {/* Dynamic index — memory of consultation */}
       <div className="flex min-h-0 flex-1 flex-col border-b border-brand-ink/6">
         <div className="shrink-0 px-6 pt-8 pb-4">
@@ -1082,7 +1370,7 @@ function RightPanel({
         {/* Visited nodes as a memory list — scrollable */}
         <ul
           ref={listRef}
-          className="min-h-0 flex-1 overflow-y-scroll px-6 pb-6 space-y-0.5"
+          className="min-h-0 flex-1 overflow-y-auto px-6 pb-6 space-y-0.5"
           style={{ scrollbarGutter: "stable" }}
         >
           {visits.map((v) => (
@@ -1113,58 +1401,8 @@ function RightPanel({
         </ul>
       </div>
 
-      {/* PDF viewer — fixed height */}
-      <div className="flex h-[500px] shrink-0 flex-col">
-        <div className="flex items-baseline justify-between px-6 pt-5">
-          <div className="text-[11px] tracking-[0.16em] text-brand-ink/35 uppercase">
-            Documento original
-          </div>
-          <span className="text-[11px] text-brand-ink/35">p. 47</span>
-        </div>
-        <div className="flex min-h-0 flex-1 px-6 pt-3 pb-5">
-          <div className="relative w-full overflow-hidden rounded-md border border-brand-ink/8 bg-white p-5 text-[10px] leading-relaxed text-brand-ink/65 shadow-[0_1px_2px_rgba(34,24,74,0.04)]">
-            {/* Watermark */}
-            <div
-              className="pointer-events-none absolute inset-0 flex items-center justify-center"
-              aria-hidden
-            >
-              <div
-                className="select-none text-center text-[44px] font-bold tracking-widest text-brand-ink/12 uppercase leading-tight"
-                style={{ transform: "rotate(-45deg)", whiteSpace: "nowrap" }}
-              >
-                <div>PDF ORIGINAL</div>
-                <div>POR IMPLEMENTAR</div>
-              </div>
-            </div>
-            <div className="border-b border-brand-ink/10 pb-2 text-center text-[9px] tracking-[0.14em] text-brand-ink/45 uppercase">
-              NSR-10 · Título A
-            </div>
-            <div className="mt-3 text-brand-accent" style={{ fontWeight: 500 }}>
-              A.2.5 Coeficientes de importancia
-            </div>
-            <p className="mt-2">
-              Las edificaciones se clasifican en cuatro grupos de uso, de acuerdo con el riesgo
-              asociado.
-            </p>
-            <p className="mt-2">
-              A cada grupo se asigna un coeficiente I que modifica el espectro sísmico de diseño.
-            </p>
-            <div className="mt-3 rounded bg-brand-ink/4 p-2">
-              <div style={{ fontWeight: 500 }}>Tabla A.2.5-1</div>
-              <div className="mt-1.5 grid grid-cols-2 gap-y-0.5 text-[9px]">
-                <div>Grupo IV</div>
-                <div className="text-right">I = 1,50</div>
-                <div>Grupo III</div>
-                <div className="text-right">I = 1,25</div>
-                <div>Grupo II</div>
-                <div className="text-right">I = 1,10</div>
-                <div>Grupo I</div>
-                <div className="text-right">I = 1,00</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* PDF viewer — documento original */}
+      <OriginalPageViewer focus={focus} />
     </aside>
   )
 }
