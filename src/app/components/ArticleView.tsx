@@ -35,15 +35,16 @@ function chapterColor(code: string, alpha = 1): string {
 
 const FIRST_CODE = Object.keys(ARTICLES)[0] ?? "B.1.1"
 
-export function ArticleView({ onHome }: { onHome: () => void; onRestart: () => void }) {
-  const [currentCode, setCurrentCode] = useState<string>(FIRST_CODE)
+export function ArticleView({ onHome, initialCode }: { onHome: () => void; onRestart: () => void; initialCode?: string }) {
+  const startCode = (initialCode && ARTICLES[initialCode]) ? initialCode : FIRST_CODE
+  const [currentCode, setCurrentCode] = useState<string>(startCode)
   const [mode, setMode] = useState<Mode>("lectura")
   const [stack, setStack] = useState<string[]>([])
-  const firstArticle = ARTICLES[FIRST_CODE]
+  const firstArticle = ARTICLES[startCode]
   const [visits, setVisits] = useState<Visit[]>(
     firstArticle ? [{ code: firstArticle.code, title: firstArticle.title, at: Date.now() }] : []
   )
-  const [focusVisit, setFocusVisit] = useState<string>(FIRST_CODE)
+  const [focusVisit, setFocusVisit] = useState<string>(startCode)
   const [leftOpen, setLeftOpen] = useState(true)
   const [rightOpen, setRightOpen] = useState(true)
 
@@ -301,17 +302,30 @@ function TituloSection({
   onSelect: (code: string) => void
 }) {
   const [expanded, setExpanded] = useState(true)
+  // "Título B — Cargas" → "B"
+  const code = title.replace(/^Título /, "").split(" — ")[0]!
   return (
     <div className="mb-1">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm text-brand-ink/75 outline-none transition-colors hover:bg-brand-ink/4 focus-visible:bg-brand-ink/4"
-      >
-        <span>{title}</span>
-        <span className={`text-brand-ink/30 transition-transform ${expanded ? "rotate-90" : ""}`}>
-          ›
-        </span>
-      </button>
+      <div className="flex items-center">
+        <button
+          onClick={() => onSelect(code)}
+          className="flex min-w-0 flex-1 items-center rounded-md px-3 py-2 text-left text-sm text-brand-ink/75 outline-none transition-colors hover:bg-brand-ink/4 focus-visible:bg-brand-ink/4"
+        >
+          <span className="truncate">{title}</span>
+        </button>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          aria-label={expanded ? "Contraer" : "Expandir"}
+          className="flex items-center px-2 py-2 text-brand-ink/30 outline-none transition-colors hover:text-brand-ink/50"
+        >
+          <span
+            className="inline-block text-base transition-transform duration-150"
+            style={{ transform: expanded ? "rotate(90deg)" : "rotate(0deg)" }}
+          >
+            ›
+          </span>
+        </button>
+      </div>
       {expanded && (
         <div className="mt-1 ml-3 border-l border-brand-ink/8 pl-2">
           {chapters.map((ch) => (
@@ -337,21 +351,46 @@ function ChapterSection({
   currentCode: string
   onSelect: (code: string) => void
 }) {
+  // "B.1 — Requisitos generales" → "B.1"
+  const code = chapter.title.split(" — ")[0]!
   const containsActive = chapter.items.some(
     (item) => currentCode === item.code || currentCode.startsWith(item.code + ".")
   )
-  const [expanded, setExpanded] = useState(containsActive)
+  const isActive = currentCode === code
+  const [expanded, setExpanded] = useState(containsActive || isActive)
   return (
     <div className="mb-0.5">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center justify-between rounded-md px-3 py-1.5 text-left text-[13px] text-brand-ink/55 outline-none transition-colors hover:bg-brand-ink/4 hover:text-brand-ink/75 focus-visible:bg-brand-ink/4"
-      >
-        <span>{chapter.title}</span>
-        <span className={`text-brand-ink/25 transition-transform ${expanded ? "rotate-90" : ""}`}>
-          ›
-        </span>
-      </button>
+      <div className="flex items-stretch">
+        <button
+          onClick={() => onSelect(code)}
+          className={`relative flex min-w-0 flex-1 items-center rounded-md px-3 py-1.5 text-left text-[13px] outline-none transition-colors ${
+            isActive
+              ? "bg-brand-accent/10 text-brand-accent"
+              : "text-brand-ink/55 hover:bg-brand-ink/4 hover:text-brand-ink/75"
+          }`}
+          style={{ fontWeight: isActive ? 500 : 400 }}
+        >
+          {isActive && (
+            <span
+              aria-hidden
+              className="absolute -left-[9px] top-1.5 bottom-1.5 w-[2px] rounded-full bg-brand-accent"
+            />
+          )}
+          <span>{chapter.title}</span>
+        </button>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          aria-label={expanded ? "Contraer" : "Expandir"}
+          className="flex items-center px-2 text-brand-ink/25 outline-none transition-colors hover:text-brand-ink/50 focus-visible:text-brand-ink/50"
+        >
+          <span
+            className="inline-block text-base transition-transform duration-150"
+            style={{ transform: expanded ? "rotate(90deg)" : "rotate(0deg)" }}
+          >
+            ›
+          </span>
+        </button>
+      </div>
       {expanded && chapter.items.length > 0 && (
         <div className="mt-0.5 ml-3 border-l border-brand-ink/8 pl-2">
           {chapter.items.map((item) => (
@@ -467,10 +506,25 @@ function CenterContent({
   if (!article) return null
 
   const parts = article.code.split(".")
-  const breadcrumbs =
-    parts.length >= 2
-      ? [`Título ${parts[0]}`, `Capítulo ${parts[0]}.${parts[1]}`, article.code]
-      : [`Título ${parts[0]}`, article.code]
+  let breadcrumbs: string[]
+  if (parts.length === 1) {
+    // "B"
+    breadcrumbs = [`Título ${parts[0]}`]
+  } else if (parts.length === 2) {
+    // "B.1"
+    breadcrumbs = [`Título ${parts[0]}`, `Capítulo ${parts[0]}.${parts[1]}`]
+  } else {
+    // "B.1.2", "B.1.2.1", "B.1.2.1.3", etc. — build every intermediate crumb
+    const intermediate: string[] = []
+    for (let i = 2; i < parts.length; i++) {
+      intermediate.push(parts.slice(0, i + 1).join("."))
+    }
+    breadcrumbs = [
+      `Título ${parts[0]}`,
+      `Capítulo ${parts[0]}.${parts[1]}`,
+      ...intermediate,
+    ]
+  }
 
   const tables = extractTables(article.body)
 
@@ -491,6 +545,7 @@ function CenterContent({
       </div>
 
       <div className="px-12 pt-5">
+        <div className="mb-1.5 text-[13px] tracking-wider text-brand-ink/35">{article.code}</div>
         <h1
           style={{
             fontSize: "clamp(1.5rem, 2.4vw, 1.875rem)",
@@ -507,6 +562,10 @@ function CenterContent({
       <div ref={scrollRef} className="mt-10 flex-1 overflow-y-auto px-12 pb-14">
         <div className="max-w-[640px]">
           <BlocksRenderer blocks={article.body} mode={mode} onOpen={onOpen} />
+
+          {article.body.length === 0 && mode === "lectura" && article.code.includes(".") && (
+            <InlineChildren code={article.code} mode={mode} onOpen={onOpen} />
+          )}
 
           <div ref={extrasRef}>
             <AnimatePresence initial={false}>
@@ -543,6 +602,43 @@ function CenterContent({
         </div>
       </div>
     </section>
+  )
+}
+
+function InlineChildren({
+  code,
+  mode,
+  onOpen,
+}: {
+  code: string
+  mode: Mode
+  onOpen: (c: string) => void
+}) {
+  const children = getChildren(code)
+  if (children.length === 0) return null
+  return (
+    <div className="space-y-12">
+      {children.map((child) => (
+        <div key={child.code}>
+          <div className="mb-5 flex items-baseline gap-4 border-b border-brand-ink/8 pb-4">
+            <span className="shrink-0 text-xs tracking-wider text-brand-ink/35">{child.code}</span>
+            <h2
+              className="text-brand-ink"
+              style={{ fontSize: "1.1875rem", fontWeight: 500, letterSpacing: "-0.015em" }}
+            >
+              {child.title}
+            </h2>
+          </div>
+          {child.body.length > 0 ? (
+            <BlocksRenderer blocks={child.body} mode={mode} onOpen={onOpen} />
+          ) : (
+            child.summary && (
+              <p className="text-[16px] leading-[1.75] text-brand-ink/60">{child.summary}</p>
+            )
+          )}
+        </div>
+      ))}
+    </div>
   )
 }
 

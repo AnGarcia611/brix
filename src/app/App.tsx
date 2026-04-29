@@ -10,6 +10,7 @@ type Screen = "welcome" | "direct" | "guided" | "result"
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("welcome")
+  const [selectedCode, setSelectedCode] = useState<string | undefined>(undefined)
   const home = () => setScreen("welcome")
 
   return (
@@ -32,12 +33,18 @@ export default function App() {
             <Welcome onPick={(m) => setScreen(m === "direct" ? "direct" : "guided")} />
           )}
           {screen === "direct" && (
-            <DirectSearch onBack={home} onResult={() => setScreen("result")} />
+            <DirectSearch
+              onBack={home}
+              onResult={(code) => {
+                setSelectedCode(code)
+                setScreen("result")
+              }}
+            />
           )}
           {screen === "guided" && (
             <GuidedSearch onBack={home} onResult={() => setScreen("result")} />
           )}
-          {screen === "result" && <ArticleView onHome={home} onRestart={home} />}
+          {screen === "result" && <ArticleView onHome={home} onRestart={home} initialCode={selectedCode} />}
         </motion.div>
       </AnimatePresence>
     </Shell>

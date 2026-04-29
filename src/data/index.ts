@@ -13,8 +13,23 @@ export const TREE = [{ title: "Título B — Cargas", chapters: TITULO_B_CHAPTER
 // ─── Lookup de artículos por código ─────────────────────────────────────────
 const ALL_ARTICLES: Article[] = [...B1, ...B2, ...B3, ...B4, ...B5, ...B6]
 
+// ─── Artículos sintéticos de capítulo (B.1 … B.6) y título (B) ──────────────
+const CHAPTER_ARTICLES: Article[] = TITULO_B_CHAPTERS.map((ch) => {
+  const code = ch.title.split(" — ")[0]!
+  const label = ch.title.split(" — ")[1] ?? ch.title
+  return { code, title: label, summary: ch.title, body: [], related: [] }
+})
+
+const TITLE_ARTICLE: Article = {
+  code: "B",
+  title: "Título B — Cargas",
+  summary: "Requisitos mínimos de cargas para el diseño de edificaciones según la NSR-10.",
+  body: [],
+  related: [],
+}
+
 export const ARTICLES: Record<string, Article> = Object.fromEntries(
-  ALL_ARTICLES.map((a) => [a.code, a])
+  [...ALL_ARTICLES, ...CHAPTER_ARTICLES, TITLE_ARTICLE].map((a) => [a.code, a])
 )
 
 // ─── REFS — alias de ARTICLES; mismo formato que consume CrossRefPanel ───────
