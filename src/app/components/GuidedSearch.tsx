@@ -20,41 +20,107 @@ const STEP2: Record<LoadType, { title: string; options: LeafOption[] }> = {
   muerta: {
     title: "¿Qué aspecto de carga muerta?",
     options: [
-      { code: "B.3.2", label: "Masas y pesos de materiales", description: "Densidades y pesos unitarios de materiales" },
-      { code: "B.3.3", label: "Cargas muertas mínimas", description: "Valores mínimos por tipo de cubierta y piso" },
-      { code: "B.3.4", label: "Elementos no estructurales", description: "Muros divisorios, fachadas, instalaciones" },
+      {
+        code: "B.3.2",
+        label: "Masas y pesos de materiales",
+        description: "Densidades y pesos unitarios de materiales",
+      },
+      {
+        code: "B.3.3",
+        label: "Cargas muertas mínimas",
+        description: "Valores mínimos por tipo de cubierta y piso",
+      },
+      {
+        code: "B.3.4",
+        label: "Elementos no estructurales",
+        description: "Muros divisorios, fachadas, instalaciones",
+      },
     ],
   },
   viva: {
     title: "¿Qué aspecto de carga viva?",
     options: [
-      { code: "B.4.2", label: "Cargas vivas uniformes", description: "Tabla de valores por tipo de ocupación" },
-      { code: "B.4.3", label: "Carga parcial", description: "Aplicación en una parte del área tributaria" },
-      { code: "B.4.4", label: "Impacto", description: "Incremento por maquinaria o equipos móviles" },
-      { code: "B.4.5", label: "Reducción de la carga viva", description: "Condiciones para reducir en áreas grandes" },
+      {
+        code: "B.4.2",
+        label: "Cargas vivas uniformes",
+        description: "Tabla de valores por tipo de ocupación",
+      },
+      {
+        code: "B.4.3",
+        label: "Carga parcial",
+        description: "Aplicación en una parte del área tributaria",
+      },
+      {
+        code: "B.4.4",
+        label: "Impacto",
+        description: "Incremento por maquinaria o equipos móviles",
+      },
+      {
+        code: "B.4.5",
+        label: "Reducción de la carga viva",
+        description: "Condiciones para reducir en áreas grandes",
+      },
     ],
   },
   viento: {
     title: "¿Qué aspecto de viento?",
     options: [
-      { code: "B.6.1.1", label: "Procedimientos permitidos", description: "Métodos aceptados para el cálculo de viento" },
-      { code: "B.6.1.3", label: "Carga de viento mínima", description: "Presión mínima de diseño para estructuras" },
-      { code: "B.6.4", label: "Procedimiento simplificado — Método 1", description: "Para edificios cerrados de poca altura" },
-      { code: "B.6.5", label: "Método 2 — Procedimiento analítico", description: "Para edificios de cualquier altura y forma" },
+      {
+        code: "B.6.1.1",
+        label: "Procedimientos permitidos",
+        description: "Métodos aceptados para el cálculo de viento",
+      },
+      {
+        code: "B.6.1.3",
+        label: "Carga de viento mínima",
+        description: "Presión mínima de diseño para estructuras",
+      },
+      {
+        code: "B.6.4",
+        label: "Procedimiento simplificado — Método 1",
+        description: "Para edificios cerrados de poca altura",
+      },
+      {
+        code: "B.6.5",
+        label: "Método 2 — Procedimiento analítico",
+        description: "Para edificios de cualquier altura y forma",
+      },
     ],
   },
   combinaciones: {
     title: "¿Qué aspecto de combinaciones?",
     options: [
-      { code: "B.2.1.1", label: "Definiciones", description: "Términos clave del sistema de cargas NSR-10" },
-      { code: "B.2.2", label: "Nomenclatura", description: "Símbolos y notación usados en combinaciones" },
-      { code: "B.2.3", label: "Método ASD", description: "Esfuerzos de trabajo — cargas sin mayorar" },
-      { code: "B.2.4", label: "Método LRFD", description: "Resistencia — cargas mayoradas por factores" },
+      {
+        code: "B.2.1.1",
+        label: "Definiciones",
+        description: "Términos clave del sistema de cargas NSR-10",
+      },
+      {
+        code: "B.2.2",
+        label: "Nomenclatura",
+        description: "Símbolos y notación usados en combinaciones",
+      },
+      {
+        code: "B.2.3",
+        label: "Método ASD",
+        description: "Esfuerzos de trabajo — cargas sin mayorar",
+      },
+      {
+        code: "B.2.4",
+        label: "Método LRFD",
+        description: "Resistencia — cargas mayoradas por factores",
+      },
     ],
   },
 }
 
-export function GuidedSearch({ onBack, onResult }: { onBack: () => void; onResult: (code: string) => void }) {
+export function GuidedSearch({
+  onBack,
+  onResult,
+}: {
+  onBack: () => void
+  onResult: (code: string) => void
+}) {
   const [step, setStep] = useState(0)
   const [loadType, setLoadType] = useState<LoadType | null>(null)
 
@@ -142,7 +208,10 @@ export function GuidedSearch({ onBack, onResult }: { onBack: () => void; onResul
                       </div>
                       <div className="mt-1 text-sm text-brand-ink/50">{opt.description}</div>
                     </div>
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-brand-ink/20 transition-all duration-200 group-hover:border-brand-accent/40" aria-hidden />
+                    <div
+                      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-brand-ink/20 transition-all duration-200 group-hover:border-brand-accent/40"
+                      aria-hidden
+                    />
                   </motion.button>
                 ))
               : STEP2[loadType!].options.map((opt, i) => (
